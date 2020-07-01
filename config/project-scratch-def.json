@@ -1,0 +1,7 @@
+{
+    "orgName": "Dev Scratch Org",
+    "edition": "Developer",
+    "description": "Salesforce Scratch Org",
+    "features": ["DebugApex"]
+}
+  
