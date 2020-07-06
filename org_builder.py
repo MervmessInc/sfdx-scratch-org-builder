@@ -2,12 +2,9 @@
 __version__ = '0.0.1'
 
 import argparse
-import json
 import logging
 import os
-import subprocess
 import sys
-import time
 
 import sfdx_cli_utils as sfdx
 
@@ -35,7 +32,7 @@ SRC_FOLDERS = []
 # Anonymous APEX file to execute ("setupdata.apex")
 BUILD_DATA_CMD = ""
 # List of permission sets to assign to the user.
-P_SETS= []
+P_SETS = []
 #
 #
 
@@ -70,15 +67,34 @@ def setup_args():
     )
 
 
+def check_install(org_alias, status_id):
+
+    py_obj = sfdx.check_install(org_alias, status_id)
+
+    if py_obj['status'] == 1:
+        message = py_obj['message']
+        logging.error(f"MESSAGE: {message}")
+        logging.warning(f"{py_obj}")
+        sys.exit(1)
+
+    if py_obj['status'] == 0:
+        status = py_obj['result']['Status']
+
+    logging.error(f"Checking package install status ~ {status}")
+
+    return status
+
+
 def check_org(org_alias):
 
-    pyObj = sfdx.check_org(org_alias)
+    py_obj = sfdx.check_org(org_alias)
 
-    scratch_orgs = pyObj['result']['scratchOrgs']
+    scratch_orgs = py_obj['result']['scratchOrgs']
     for org in scratch_orgs:
         try:
             if org_alias == org['alias'] and not org['isExpired']:
-                logging.debug(f"Alias : {org['alias']}, Username : {org['username']}, End Date : {org['expirationDate']}")
+                logging.debug(
+                    f"Alias : {org['alias']}, Username : {org['username']}, End Date : {org['expirationDate']}")
                 return org['username'], True
 
         except KeyError:
@@ -89,107 +105,108 @@ def check_org(org_alias):
 
 def create_sratch_org(org_alias, duration, devhub):
 
-    pyObj = sfdx.create_sratch_org(org_alias, duration, devhub)
+    py_obj = sfdx.create_sratch_org(org_alias, duration, devhub)
 
-    if pyObj['status'] == 1:
-        message = pyObj['message']
+    if py_obj['status'] == 1:
+        message = py_obj['message']
         logging.error(f"MESSAGE: {message}")
-        logging.warning(f"{pyObj}")
+        logging.warning(f"{py_obj}")
         sys.exit(1)
 
-    if pyObj['status'] == 0:
-        username = pyObj['result']['username']
+    if py_obj['status'] == 0:
+        username = py_obj['result']['username']
 
     return username
 
 
-def check_install(org_alias, status_id):
+def execute_script(org_alias, apex_file):
 
-    pyObj = sfdx.check_install(org_alias, status_id)
+    py_obj = sfdx.execute_script(org_alias, apex_file)
 
-    if pyObj['status'] == 1:
-        message = pyObj['message']
+    if py_obj['status'] == 1:
+        message = py_obj['message']
         logging.error(f"MESSAGE: {message}")
-        logging.warning(f"{pyObj}")
+        logging.error(
+            f"CompileProblem: {py_obj['result']['compileProblem']}\nExceptionMessage: {py_obj['result']['exceptionMessage']}")
+        logging.warning(f"{py_obj}")
         sys.exit(1)
 
-    if pyObj['status'] == 0:
-        status = pyObj['result']['Status']
+    if py_obj['status'] == 0:
+        logging.warning(f"{py_obj}")
 
-    logging.error(f"Checking package install status ~ {status}")
-
-    return status
+    return True
 
 
 def install_package(org_alias, package_id):
 
-    pyObj = sfdx.install_package(org_alias, package_id)
+    py_obj = sfdx.install_package(org_alias, package_id)
 
-    if pyObj['status'] == 1:
-        message = pyObj['message']
+    if py_obj['status'] == 1:
+        message = py_obj['message']
         logging.error(f"MESSAGE: {message}")
-        logging.warning(f"{pyObj}")
+        logging.warning(f"{py_obj}")
         sys.exit(1)
 
-    if pyObj['status'] == 0:
-        install_status = pyObj['result']['Status']
+    if py_obj['status'] == 0:
+        install_status = py_obj['result']['Status']
         while install_status == "IN_PROGRESS":
-            install_status = check_install(org_alias, pyObj['result']['Id'])
+            install_status = check_install(org_alias, py_obj['result']['Id'])
+
+    return True
+
+
+def install_permission_set(org_alias, pset):
+
+    py_obj = sfdx.install_permission_set(org_alias, pset)
+
+    if py_obj['status'] == 1:
+        message = py_obj['result']['failures'][0]['message']
+        logging.error(f"MESSAGE: {message}")
+        logging.warning(f"{py_obj}")
+
+    if py_obj['status'] == 0:
+        logging.info(f"{py_obj}")
 
     return True
 
 
 def install_source(org_alias, src_folder):
 
-    pyObj = sfdx.install_source(org_alias, src_folder)
+    py_obj = sfdx.install_source(org_alias, src_folder)
 
-    if pyObj['status'] == 1:
-        message = pyObj['message']
+    if py_obj['status'] == 1:
+        message = py_obj['message']
         logging.error(f"MESSAGE: {message}")
-        logging.warning(f"{pyObj}")
+        logging.warning(f"{py_obj}")
         sys.exit(1)
 
-    if pyObj['status'] == 0:
-        for item in pyObj['result']['deployedSource']:
-            logging.info(f"Type: {item['type']}, State: {item['state']}, Name: {item['fullName']}")
+    if py_obj['status'] == 0:
+        for item in py_obj['result']['deployedSource']:
+            logging.info(
+                f"Type: {item['type']}, State: {item['state']}, Name: {item['fullName']}")
 
     return True
 
 
-def execute_script(org_alias, apex_file):
+def user_details(org_alias):
 
-    pyObj = sfdx.execute_script(org_alias, apex_file)
+    py_obj = sfdx.user_details(org_alias)
 
-    if pyObj['status'] == 1:
-        message = pyObj['message']
+    if py_obj['status'] == 1:
+        message = py_obj['message']
         logging.error(f"MESSAGE: {message}")
-        logging.error(f"Compiled: {pyObj['result']['compiled']}\nCompileProblem: {pyObj['result']['compileProblem']}\nExceptionMessage: {pyObj['result']['exceptionMessage']}")
-        logging.warning(f"{pyObj}")
+        logging.warning(f"{py_obj}")
         sys.exit(1)
 
-    if pyObj['status'] == 0:
-        logging.info(f"{pyObj['result']['compiled']}\nCompileProblem: {pyObj['result']['compileProblem']}\nExceptionMessage: {pyObj['result']['exceptionMessage']}")
-
-    return True
-
-
-def install_permission_Set(org_alias, pset):
-
-    pyObj = sfdx.install_permission_Set(org_alias, pset)
-
-    if pyObj['status'] == 1:
-        message = pyObj['result']['failures'][0]['message']
-        logging.error(f"MESSAGE: {message}")
-        logging.warning(f"{pyObj}")
-
-    if pyObj['status'] == 0:
-        logging.info(f"{pyObj}")
-
-    return True
+    if py_obj['status'] == 0:
+        logging.error(f"OrgId \t: {py_obj['result']['orgId']}")
+        logging.error(f"Username \t: {py_obj['result']['username']}")
+        logging.error(f"Url \t: {py_obj['result']['instanceUrl']}")
+        logging.error(f"Alias \t: {py_obj['result']['alias']}")
 
 
 def main():
-    logging.debug(f"main()")
+    logging.debug("main()")
 
     setup_args()
     args = parser.parse_args()
@@ -212,8 +229,6 @@ def main():
         logging.error("~~~ Create New Scratch Org ~~~")
         username = create_sratch_org(args.alias, args.duration, args.devhub)
 
-    logging.error(f"USER: {username}\n")
-
     if PACKAGE_IDS:
         for pckg in PACKAGE_IDS:
             logging.error(f"~~~ Installing Packages {pckg} ~~~")
@@ -227,13 +242,17 @@ def main():
     if P_SETS:
         for pset in P_SETS:
             logging.error(f"~~~ Installing Permission Set ({pset}) ~~~")
-            install_permission_Set(args.alias, pset)
+            install_permission_set(args.alias, pset)
 
     if BUILD_DATA_CMD:
-        logging.error(f"~~~ Running Build data ~~~")
+        logging.error("~~~ Running Build data ~~~")
         execute_script(args.alias, BUILD_DATA_CMD)
 
+    logging.error("~~~ Details ~~~")
+    user_details(args.alias)
+
     logging.error("~~~ Scratch Org Complete ~~~")
+
 
 if __name__ == '__main__':
     main()

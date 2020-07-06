@@ -1,7 +1,6 @@
 # org_builder.py
 __version__ = '0.0.1'
 
-import argparse
 import json
 import logging
 import os
@@ -21,24 +20,47 @@ SLEEP_SEC = 120
 #
 #
 
+
 def parse_output(cmd_output):
 
     logging.warning(f"ARGS: {cmd_output.args}")
     logging.debug(f"STDOUT:\n{cmd_output.stdout}")
     logging.debug(f"STDERR:\n{cmd_output.stderr}")
 
-    pyObj={}
+    py_obj = {}
 
     if cmd_output.stderr != b'':
         logging.error(f"STDERR: {cmd_output.stderr}")
         sys.exit(1)
 
     if cmd_output.stdout != b'':
-        pyObj = json.loads(cmd_output.stdout)
+        py_obj = json.loads(cmd_output.stdout)
 
-    logging.debug(json.dumps(pyObj,sort_keys=True, indent=3))
+    logging.debug(json.dumps(py_obj, sort_keys=True, indent=3))
 
-    return pyObj
+    return py_obj
+
+
+def check_install(org_alias, status_id):
+    logging.debug(f"check_install({org_alias}, {status_id})")
+
+    time.sleep(SLEEP_SEC)
+
+    out = subprocess.run(
+        [
+            SFDX_CMD,
+            "force:package:install:report",
+            "-u",
+            f"{org_alias}",
+            "-i",
+            f"{status_id}",
+            "--json"
+        ],
+        capture_output=True,
+        check=True
+    )
+
+    return parse_output(out)
 
 
 def check_org(org_alias):
@@ -51,7 +73,8 @@ def check_org(org_alias):
             "--all",
             "--json"
         ],
-        capture_output=True
+        capture_output=True,
+        check=True
     )
 
     return parse_output(out)
@@ -75,28 +98,28 @@ def create_sratch_org(org_alias, duration, devhub):
             f"{devhub}",
             "--json"
         ],
-        capture_output=True
+        capture_output=True,
+        check=True
     )
 
     return parse_output(out)
 
 
-def check_install(org_alias, status_id):
-    logging.debug(f"check_install({org_alias}, {status_id})")
-
-    time.sleep(SLEEP_SEC)
+def execute_script(org_alias, apex_file):
+    logging.debug(f"execute_script({org_alias}, {apex_file})")
 
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:package:install:report",
+            "force:apex:execute",
+            "-f",
+            f"{apex_file}",
             "-u",
             f"{org_alias}",
-            "-i",
-            f"{status_id}",
             "--json"
         ],
-        capture_output=True
+        capture_output=True,
+        check=True
     )
 
     return parse_output(out)
@@ -116,7 +139,28 @@ def install_package(org_alias, package_id):
             "--noprompt",
             "--json"
         ],
-        capture_output=True
+        capture_output=True,
+        check=True
+    )
+
+    return parse_output(out)
+
+
+def install_permission_set(org_alias, pset):
+    logging.debug(f"install_permission_Set({org_alias}, {pset})")
+
+    out = subprocess.run(
+        [
+            SFDX_CMD,
+            "force:user:permset:assign",
+            "-n",
+            f"{pset}",
+            "-u",
+            f"{org_alias}",
+            "--json"
+        ],
+        capture_output=True,
+        check=True
     )
 
     return parse_output(out)
@@ -138,45 +182,26 @@ def install_source(org_alias, src_folder):
             "fatal",
             "--json"
         ],
-        capture_output=True
+        capture_output=True,
+        check=True
     )
 
     return parse_output(out)
 
 
-def execute_script(org_alias, apex_file):
-    logging.debug(f"execute_script({org_alias}, {apex_file})")
+def user_details(org_alias):
+    logging.debug(f"user_details({org_alias})")
 
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:apex:execute",
-            "-f",
-            f"{apex_file}",
+            "force:user:display",
             "-u",
             f"{org_alias}",
             "--json"
         ],
-        capture_output=True
-    )
-
-    return parse_output(out)
-
-
-def install_permission_Set(org_alias, pset):
-    logging.debug(f"install_permission_Set({org_alias}, {pset})")
-
-    out = subprocess.run(
-        [
-            SFDX_CMD,
-            "force:user:permset:assign",
-            "-n",
-            f"{pset}",
-            "-u",
-            f"{org_alias}",
-            "--json"
-        ],
-        capture_output=True
+        capture_output=True,
+        check=True
     )
 
     return parse_output(out)
