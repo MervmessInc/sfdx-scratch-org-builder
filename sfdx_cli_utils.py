@@ -63,22 +63,6 @@ def check_install(org_alias, status_id):
     return parse_output(out)
 
 
-def check_org(org_alias):
-    logging.debug(f"check_org({org_alias})")
-
-    out = subprocess.run(
-        [
-            SFDX_CMD,
-            "force:org:list",
-            "--all",
-            "--json"
-        ],
-        capture_output=True
-    )
-
-    return parse_output(out)
-
-
 def create_sratch_org(org_alias, duration, devhub):
     logging.debug(f"create_sratch_org({org_alias}, {duration}, {devhub})")
 
@@ -175,6 +159,22 @@ def install_source(org_alias, src_folder):
             "-g",
             "--loglevel",
             "fatal",
+            "--json"
+        ],
+        capture_output=True
+    )
+
+    return parse_output(out)
+
+
+def org_list(org_alias):
+    logging.debug(f"check_org({org_alias})")
+
+    out = subprocess.run(
+        [
+            SFDX_CMD,
+            "force:org:list",
+            "--all",
             "--json"
         ],
         capture_output=True
