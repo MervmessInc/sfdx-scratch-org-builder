@@ -23,8 +23,11 @@ logger = logging.getLogger()
 
 # Config
 #
-SFDX_CMD = "sfdx.cmd"
-SLEEP_SEC = 120
+
+# Default duration in days
+DURATION = 10
+# Default Devhub
+DEVHUB = "my-dev-hub-org"
 # List of managed package Ids to install into the Org.
 PACKAGE_IDS = []
 # List of metadata source folders (SRC_FOLDERS = ["force-app"])
@@ -33,8 +36,10 @@ SRC_FOLDERS = []
 BUILD_DATA_CMD = ""
 # List of permission sets to assign to the user.
 P_SETS = []
+
 #
 #
+
 
 parser = argparse.ArgumentParser(
     prog='org_builder',
@@ -48,21 +53,21 @@ def setup_args():
 
     parser.add_argument(
         '-a', '--alias',
-        help='Scratch Org user alias'
+        help="Scratch Org user alias"
     )
     parser.add_argument(
         '-d', '--duration',
-        help='Number of days org will last [1..30]. Default: 10',
-        default=10
+        help=f"Number of days org will last [1..30]. Default: {DURATION}",
+        default=DURATION
     )
     parser.add_argument(
         '-v', '--devhub',
-        help='Target dev hub username or alias. Default: my-dev-hub-org',
-        default='my-dev-hub-org'
+        help=f"Target dev hub username or alias. Default: {DEVHUB}",
+        default=DEVHUB
     )
     parser.add_argument(
         '--debug',
-        help='Turn on debug messages',
+        help="Turn on debug messages",
         action='store_true'
     )
 

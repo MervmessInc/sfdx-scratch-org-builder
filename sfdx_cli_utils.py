@@ -17,6 +17,7 @@ os.chdir(dir_path)
 #
 SFDX_CMD = "sfdx.cmd"
 SLEEP_SEC = 120
+SCRATCH_DEF = "config/project-scratch-def.json"
 #
 #
 
@@ -56,8 +57,7 @@ def check_install(org_alias, status_id):
             f"{status_id}",
             "--json"
         ],
-        capture_output=True,
-        check=True
+        capture_output=True
     )
 
     return parse_output(out)
@@ -73,8 +73,7 @@ def check_org(org_alias):
             "--all",
             "--json"
         ],
-        capture_output=True,
-        check=True
+        capture_output=True
     )
 
     return parse_output(out)
@@ -88,7 +87,7 @@ def create_sratch_org(org_alias, duration, devhub):
             SFDX_CMD,
             "force:org:create",
             "-f",
-            "config/project-scratch-def.json",
+            f"{SCRATCH_DEF}",
             "-s",
             "-d",
             f"{duration}",
@@ -98,8 +97,7 @@ def create_sratch_org(org_alias, duration, devhub):
             f"{devhub}",
             "--json"
         ],
-        capture_output=True,
-        check=True
+        capture_output=True
     )
 
     return parse_output(out)
@@ -118,8 +116,7 @@ def execute_script(org_alias, apex_file):
             f"{org_alias}",
             "--json"
         ],
-        capture_output=True,
-        check=True
+        capture_output=True
     )
 
     return parse_output(out)
@@ -139,8 +136,7 @@ def install_package(org_alias, package_id):
             "--noprompt",
             "--json"
         ],
-        capture_output=True,
-        check=True
+        capture_output=True
     )
 
     return parse_output(out)
@@ -159,8 +155,7 @@ def install_permission_set(org_alias, pset):
             f"{org_alias}",
             "--json"
         ],
-        capture_output=True,
-        check=True
+        capture_output=True
     )
 
     return parse_output(out)
@@ -182,8 +177,7 @@ def install_source(org_alias, src_folder):
             "fatal",
             "--json"
         ],
-        capture_output=True,
-        check=True
+        capture_output=True
     )
 
     return parse_output(out)
@@ -200,8 +194,7 @@ def user_details(org_alias):
             f"{org_alias}",
             "--json"
         ],
-        capture_output=True,
-        check=True
+        capture_output=True
     )
 
     return parse_output(out)
