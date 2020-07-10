@@ -167,14 +167,31 @@ def install_source(org_alias, src_folder):
     return parse_output(out)
 
 
-def org_list(org_alias):
-    logging.debug(f"check_org({org_alias})")
+def org_list():
+    logging.debug(f"org_list()")
 
     out = subprocess.run(
         [
             SFDX_CMD,
             "force:org:list",
             "--all",
+            "--json"
+        ],
+        capture_output=True
+    )
+
+    return parse_output(out)
+
+
+def org_open(org_user):
+    logging.debug(f"open_org({org_user})")
+
+    out = subprocess.run(
+        [
+            SFDX_CMD,
+            "force:org:open",
+            "-u",
+            f"{org_user}",
             "--json"
         ],
         capture_output=True
