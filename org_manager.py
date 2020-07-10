@@ -5,6 +5,7 @@ import logging
 import os
 import pickle
 import sys
+import threading
 
 import sfdx_cli_utils as sfdx
 
@@ -21,26 +22,20 @@ logging.basicConfig(
     datefmt='%d-%b-%y %H:%M:%S')
 logger = logging.getLogger()
 
-def print_org_list(orgs):
-    for idx, o in orgs.items():
-        print_org_details(idx, o)
-
 
 def print_org_details(idx, o):
     print(f"{idx} > {o['username']}, Alias : {o['alias']}, DevHub : {o['isDevHub']} {o['defaultMarker']}")
 
 
-def main():
-    logging.debug("main()")
+def print_org_list(orgs):
+    for idx, o in orgs.items():
+        print_org_details(idx, o)
 
-    if os.path.isfile("org_list.p"):
-        pyObj = pickle.load( open ( "org_list.p", "rb" ))
-    else:
-        pyObj = sfdx.org_list()
-        pickle.dump(pyObj, open( "org_list.p", "wb" ))
 
-    non_scratch_orgs = pyObj['result']['nonScratchOrgs']
-    scratch_orgs = pyObj['result']['scratchOrgs']
+def show_menu(org_list):
+    
+    non_scratch_orgs = org_list['result']['nonScratchOrgs']
+    scratch_orgs = org_list['result']['scratchOrgs']
 
     print()
 
@@ -48,25 +43,47 @@ def main():
     index = 1
 
     for o in non_scratch_orgs:
-        org = {
-            index : o
-        }
+        org = { index : o }
         orgs.update(org)
         index = index + 1
 
     for o in scratch_orgs:
         dh = { "isDevHub" : False }
         o.update(dh)
-        org = {
-            index : o
-        }
+        org = { index : o }
         orgs.update(org)
         index = index + 1
 
     print_org_list(orgs)
 
-    #choice = orgs.get(1)
-    #sfdx.org_open(choice['username'])
+    return orgs
+
+
+def update_org_list():
+    org_list = sfdx.org_list()
+    pickle.dump(org_list, open( "org_list.p", "wb" ))
+
+    return org_list
+
+
+def main():
+    logging.debug("main()")
+
+    if os.path.isfile("org_list.p"):
+        org_list = pickle.load( open ( "org_list.p", "rb" ))
+        t = threading.Thread(target=update_org_list)
+        t.start()
+
+    else:
+        org_list = update_org_list()
+
+    orgs = show_menu(org_list)
+    print()
+
+    num = int(input("Enter choice > "))
+    choice = orgs.get(num)
+    sfdx.org_open(choice['username'])
+    
 
 if __name__ == '__main__':
     main()
