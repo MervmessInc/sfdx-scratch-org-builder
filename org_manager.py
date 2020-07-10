@@ -23,6 +23,22 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 
+def clean_org_data(org):
+    if "alias" not in org:
+        a = { "alias" : "<blank>" }
+        org.update(a)
+
+    if "isDevHub" not in org:
+        dh = { "isDevHub" : False }
+        org.update(dh)
+
+    if "defaultMarker" not in org:
+        dm = { "defaultMarker" : "" }
+        org.update(dm)
+
+    return org
+
+
 def print_org_details(idx, o):
     print(f"{idx} > {o['username']}, Alias : {o['alias']}, DevHub : {o['isDevHub']} {o['defaultMarker']}")
 
@@ -33,7 +49,7 @@ def print_org_list(orgs):
 
 
 def show_menu(org_list):
-    
+
     non_scratch_orgs = org_list['result']['nonScratchOrgs']
     scratch_orgs = org_list['result']['scratchOrgs']
 
@@ -43,14 +59,12 @@ def show_menu(org_list):
     index = 1
 
     for o in non_scratch_orgs:
-        org = { index : o }
+        org = { index : clean_org_data(o) }
         orgs.update(org)
         index = index + 1
 
     for o in scratch_orgs:
-        dh = { "isDevHub" : False }
-        o.update(dh)
-        org = { index : o }
+        org = { index : clean_org_data(o) }
         orgs.update(org)
         index = index + 1
 
@@ -83,7 +97,7 @@ def main():
     num = int(input("Enter choice > "))
     choice = orgs.get(num)
     sfdx.org_open(choice['username'])
-    
+
 
 if __name__ == '__main__':
     main()
