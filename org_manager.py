@@ -1,9 +1,9 @@
 # org_manager.py
 __version__ = '0.0.1'
 
+import json
 import logging
 import os
-import pickle
 import sys
 import threading
 
@@ -75,7 +75,7 @@ def show_menu(org_list):
 
 def update_org_list():
     org_list = sfdx.org_list()
-    pickle.dump(org_list, open( "org_list.p", "wb" ))
+    json.dump(org_list, open( "org_list.json", "w" ))
 
     return org_list
 
@@ -83,8 +83,8 @@ def update_org_list():
 def main():
     logging.debug("main()")
 
-    if os.path.isfile("org_list.p"):
-        org_list = pickle.load( open ( "org_list.p", "rb" ))
+    if os.path.isfile("org_list.json"):
+        org_list = json.load(open ( "org_list.json", "r" ))
         t = threading.Thread(target=update_org_list)
         t.start()
 
