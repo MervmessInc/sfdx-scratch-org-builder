@@ -22,6 +22,17 @@ logging.basicConfig(
     datefmt='%d-%b-%y %H:%M:%S')
 logger = logging.getLogger()
 
+# Config
+#
+
+# https://ozzmaker.com/add-colour-to-text-in-python/
+TGREEN =  "\033[1;32m"
+TRED = "\033[1;31m"
+ENDC = "\033[m"
+#
+#
+
+
 
 def clean_org_data(org):
     if "alias" not in org:
@@ -44,10 +55,23 @@ def clean_org_data(org):
 
 
 def print_org_details(idx, o):
-    print(f"{idx} > {o['username']}, Alias : {o['alias']}, Status : {o['status']}, DevHub : {o['isDevHub']} {o['defaultMarker']}")
+    color = TGREEN
+    if o['status'] != "Active":
+        color = TRED
 
+    print ("{:>3} {:<3} {:<31} {:<17} {:<10}"
+    .format(
+        idx,
+        o['defaultMarker'], 
+        o['username'], 
+        o['alias'],
+        color + o['status'] + ENDC))
+        
 
 def print_org_list(orgs):
+    print ("{:>3} {:<3} {:<31} {:<17} {:<10}"
+    .format("idx", "", "Username", "Alias", "Status"))
+
     for idx, o in orgs.items():
         print_org_details(idx, o)
 
@@ -98,7 +122,7 @@ def main():
     orgs = show_menu(org_list)
     print()
 
-    choice = input("Enter choice > ")
+    choice = input("Enter choice (idx) or q > ")
     
     try:
         org = orgs.get(int(choice))
