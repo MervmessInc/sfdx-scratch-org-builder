@@ -36,11 +36,15 @@ def clean_org_data(org):
         dm = { "defaultMarker" : "" }
         org.update(dm)
 
+    if "status" not in org:
+        s = { "status" : "Active" }
+        org.update(s)
+
     return org
 
 
 def print_org_details(idx, o):
-    print(f"{idx} > {o['username']}, Alias : {o['alias']}, DevHub : {o['isDevHub']} {o['defaultMarker']}")
+    print(f"{idx} > {o['username']}, Alias : {o['alias']}, Status : {o['status']}, DevHub : {o['isDevHub']} {o['defaultMarker']}")
 
 
 def print_org_list(orgs):
@@ -94,10 +98,13 @@ def main():
     orgs = show_menu(org_list)
     print()
 
-    num = int(input("Enter choice > "))
-    choice = orgs.get(num)
-    sfdx.org_open(choice['username'])
-
+    choice = input("Enter choice > ")
+    
+    try:
+        org = orgs.get(int(choice))
+        sfdx.org_open(org['username'])
+    except Exception:
+        pass
 
 if __name__ == '__main__':
     main()
