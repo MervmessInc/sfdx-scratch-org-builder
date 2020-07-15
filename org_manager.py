@@ -24,8 +24,6 @@ logger = logging.getLogger()
 
 # Config
 #
-
-# https://ozzmaker.com/add-colour-to-text-in-python/
 TGREEN =  "\033[1;32m"
 TRED = "\033[1;31m"
 ENDC = "\033[m"
@@ -36,7 +34,7 @@ ENDC = "\033[m"
 
 def clean_org_data(org):
     if "alias" not in org:
-        a = { "alias" : "<blank>" }
+        a = { "alias" : "" }
         org.update(a)
 
     if "isDevHub" not in org:
@@ -51,6 +49,10 @@ def clean_org_data(org):
         s = { "status" : "Active" }
         org.update(s)
 
+    if "expirationDate" not in org:
+        dt = { "expirationDate" : "" }
+        org.update(dt)
+
     return org
 
 
@@ -59,18 +61,22 @@ def print_org_details(idx, o):
     if o['status'] != "Active":
         color = TRED
 
-    print ("{:>3} {:<3} {:<31} {:<17} {:<10}"
+    print ("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
     .format(
         idx,
-        o['defaultMarker'], 
-        o['username'], 
+        o['defaultMarker'],
         o['alias'],
+        o['username'],
+        o['expirationDate'],
         color + o['status'] + ENDC))
-        
+
 
 def print_org_list(orgs):
-    print ("{:>3} {:<3} {:<31} {:<17} {:<10}"
-    .format("idx", "", "Username", "Alias", "Status"))
+    print ("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
+    .format("idx", "", "Alias", "Username", "Expiration", "Status"))
+    print ("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
+    .format("---", "", "-----", "--------", "----------", "------"))
+
 
     for idx, o in orgs.items():
         print_org_details(idx, o)
@@ -123,7 +129,7 @@ def main():
     print()
 
     choice = input("Enter choice (idx) or q > ")
-    
+
     try:
         org = orgs.get(int(choice))
         sfdx.org_open(org['username'])
