@@ -1,5 +1,5 @@
-# org_builder.py
-__version__ = '0.0.1'
+# sfdx_cli_utils.py
+__version__ = '0.0.2'
 
 import json
 import logging
