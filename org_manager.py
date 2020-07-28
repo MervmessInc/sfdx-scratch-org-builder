@@ -4,7 +4,6 @@ __version__ = '0.0.1'
 import json
 import logging
 import os
-import sys
 import threading
 
 import sfdx_cli_utils as sfdx
