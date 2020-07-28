@@ -92,7 +92,7 @@ def check_install(org_alias, status_id):
 
 def check_org(org_alias):
 
-    py_obj = sfdx.org_list(org_alias)
+    py_obj = sfdx.org_list()
 
     scratch_orgs = py_obj['result']['scratchOrgs']
     for org in scratch_orgs:
