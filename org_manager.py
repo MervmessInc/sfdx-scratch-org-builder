@@ -97,13 +97,18 @@ def show_menu(org_list):
         index = index + 1
 
     for o in scratch_orgs:
-        org = { index : clean_org_data(o) }
+        clean_org = clean_org_data(o)
+
+        if clean_org['defaultMarker'] == "(U)":
+            defaultusername = index
+
+        org = { index : clean_org }
         orgs.update(org)
         index = index + 1
 
     print_org_list(orgs)
 
-    return orgs
+    return orgs, defaultusername
 
 
 def update_org_list():
@@ -124,14 +129,19 @@ def main():
     else:
         org_list = update_org_list()
 
-    orgs = show_menu(org_list)
+    orgs, defaultusername = show_menu(org_list)
     print()
 
     choice = input("Enter choice (idx) or q > ")
 
     try:
-        org = orgs.get(int(choice))
+        if choice.upper() == 'U':
+            org = orgs.get(defaultusername)
+        elif choice.isnumeric():
+            org = orgs.get(int(choice))
+
         sfdx.org_open(org['username'])
+
     except Exception:
         pass
 
