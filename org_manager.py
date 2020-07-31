@@ -151,13 +151,14 @@ def print_org_list(orgs):
         print_org_details(idx, o)
 
 
-def show_menu(orgs):
+def show_org_list(orgs):
     print()
     print_org_list(orgs)
     print()
-    choice = input("Enter choice (idx) or q > ")
+    choice = input("Enter choice 'idx' or 'U' > ") or 'Q'
 
     return choice
+
 
 def update_org_list():
     org_list = sfdx.org_list()
@@ -172,7 +173,7 @@ def main():
         org_list = get_org_list()
         orgs, defaultusername = get_orgs_map(org_list)
     
-        choice = show_menu(orgs)
+        choice = show_org_list(orgs)
 
         if choice.isnumeric():
             idx = int(choice)
@@ -188,14 +189,15 @@ def main():
             username = org['alias']
 
         print()
-        action = input(f"[D]eploy '{defaultpath}' or [O]pen '{username}' [O]> ")
+        action = input(f"[D]eploy '{defaultpath}' or [O]pen '{username}' >  ") or 'O'
 
-        if action.upper() == 'D':
+        if action.upper() == 'D' or action.upper() == 'DEPLOY':
             logging.error(f"~~~ Installing Source ({defaultpath}) ~~~")
             install_source(username, f"{defaultpath}")
-        elif action.upper() == 'O':
+        elif action.upper() == 'O' or action.upper() == 'OPEN':
             logging.error(f"~~~ Opening Org ({username}) ~~~")
             sfdx.org_open(org['username'])
+        
 
     except Exception:
         traceback.print_exc()
