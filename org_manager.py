@@ -74,6 +74,7 @@ def get_orgs_map(org_list):
     scratch_orgs = org_list['result']['scratchOrgs']
 
     orgs = {}
+    defaultusername = 1
     index = 1
 
     for o in non_scratch_orgs:
