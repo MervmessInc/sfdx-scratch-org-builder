@@ -59,7 +59,7 @@ def print_org_details(idx, o):
     if o['status'] != "Active":
         color = TRED
 
-    print ("{:>3} {:<3} {:<31} {:<17} {:<10}"
+    print ("{:>3} {:<3} {:<45} {:<20} {:<10}"
     .format(
         idx,
         o['defaultMarker'], 
@@ -69,7 +69,7 @@ def print_org_details(idx, o):
         
 
 def print_org_list(orgs):
-    print ("{:>3} {:<3} {:<31} {:<17} {:<10}"
+    print ("{:>3} {:<3} {:<45} {:<20} {:<10}"
     .format("idx", "", "Username", "Alias", "Status"))
 
     for idx, o in orgs.items():
