@@ -35,11 +35,11 @@ SRC_FOLDERS = []
 # Anonymous APEX file to execute ("setupdata.apex")
 BUILD_DATA_CMD = ""
 # List of permission sets to assign to the user.
+PACKAGE_P_SETS = []
+#
 P_SETS = []
-
 #
 #
-
 
 parser = argparse.ArgumentParser(
     prog='org_builder',
@@ -238,6 +238,11 @@ def main():
         for pckg in PACKAGE_IDS:
             logging.error(f"~~~ Installing Packages {pckg} ~~~")
             install_package(args.alias, pckg)
+
+    if PACKAGE_P_SETS:
+        for pset in PACKAGE_P_SETS:
+            logging.error(f"~~~ Installing Permission Set ({pset}) ~~~")
+            install_permission_set(args.alias, pset)
 
     if SRC_FOLDERS:
         for fldr in SRC_FOLDERS:
