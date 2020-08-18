@@ -4,9 +4,13 @@ __version__ = '0.0.1'
 import json
 import logging
 import os
+<<<<<<< HEAD
 import sys
 import threading
 import traceback
+=======
+import threading
+>>>>>>> master
 
 import sfdx_cli_utils as sfdx
 
@@ -25,7 +29,11 @@ logger = logging.getLogger()
 
 # Config
 #
+<<<<<<< HEAD
 TGREEN = "\033[1;32m"
+=======
+TGREEN =  "\033[1;32m"
+>>>>>>> master
 TRED = "\033[1;31m"
 ENDC = "\033[m"
 #
@@ -35,6 +43,7 @@ ENDC = "\033[m"
 
 def clean_org_data(org):
     if "alias" not in org:
+<<<<<<< HEAD
         a = {"alias" : ""}
         org.update(a)
 
@@ -52,10 +61,30 @@ def clean_org_data(org):
 
     if "expirationDate" not in org:
         dt = {"expirationDate" : ""}
+=======
+        a = { "alias" : "" }
+        org.update(a)
+
+    if "isDevHub" not in org:
+        dh = { "isDevHub" : False }
+        org.update(dh)
+
+    if "defaultMarker" not in org:
+        dm = { "defaultMarker" : "" }
+        org.update(dm)
+
+    if "status" not in org:
+        s = { "status" : "Active" }
+        org.update(s)
+
+    if "expirationDate" not in org:
+        dt = { "expirationDate" : "" }
+>>>>>>> master
         org.update(dt)
 
     return org
 
+<<<<<<< HEAD
 def get_org_list():
     if os.path.isfile("org_list.json"):
         org_list = json.load(open("org_list.json", "r"))
@@ -124,13 +153,19 @@ def parse_sfdx_project():
 
     return defaultpath
 
+=======
+>>>>>>> master
 
 def print_org_details(idx, o):
     color = TGREEN
     if o['status'] != "Active":
         color = TRED
 
+<<<<<<< HEAD
     print("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
+=======
+    print ("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
+>>>>>>> master
     .format(
         idx,
         o['defaultMarker'],
@@ -141,9 +176,15 @@ def print_org_details(idx, o):
 
 
 def print_org_list(orgs):
+<<<<<<< HEAD
     print("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
     .format("idx", "", "Alias", "Username", "Expiration", "Status"))
     print("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
+=======
+    print ("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
+    .format("idx", "", "Alias", "Username", "Expiration", "Status"))
+    print ("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
+>>>>>>> master
     .format("---", "", "-----", "--------", "----------", "------"))
 
 
@@ -151,6 +192,7 @@ def print_org_list(orgs):
         print_org_details(idx, o)
 
 
+<<<<<<< HEAD
 def show_org_list(orgs):
     print()
     print_org_list(orgs)
@@ -158,17 +200,47 @@ def show_org_list(orgs):
     choice = input("Enter choice 'idx' or 'U' > ") or 'Q'
 
     return choice
+=======
+def show_menu(org_list):
+
+    non_scratch_orgs = org_list['result']['nonScratchOrgs']
+    scratch_orgs = org_list['result']['scratchOrgs']
+
+    print()
+
+    orgs = {}
+    index = 1
+
+    for o in non_scratch_orgs:
+        org = { index : clean_org_data(o) }
+        orgs.update(org)
+        index = index + 1
+
+    for o in scratch_orgs:
+        org = { index : clean_org_data(o) }
+        orgs.update(org)
+        index = index + 1
+
+    print_org_list(orgs)
+
+    return orgs
+>>>>>>> master
 
 
 def update_org_list():
     org_list = sfdx.org_list()
+<<<<<<< HEAD
     json.dump(org_list, open("org_list.json", "w"))
+=======
+    json.dump(org_list, open( "org_list.json", "w" ))
+>>>>>>> master
 
     return org_list
 
 
 def main():
     logging.debug("main()")
+<<<<<<< HEAD
     try:
         org_list = get_org_list()
         orgs, defaultusername = get_orgs_map(org_list)
@@ -201,6 +273,27 @@ def main():
 
     except Exception:
         traceback.print_exc()
+=======
+
+    if os.path.isfile("org_list.json"):
+        org_list = json.load(open ( "org_list.json", "r" ))
+        t = threading.Thread(target=update_org_list)
+        t.start()
+
+    else:
+        org_list = update_org_list()
+
+    orgs = show_menu(org_list)
+    print()
+
+    choice = input("Enter choice (idx) or q > ")
+
+    try:
+        org = orgs.get(int(choice))
+        sfdx.org_open(org['username'])
+    except Exception:
+        pass
+>>>>>>> master
 
 if __name__ == '__main__':
     main()
