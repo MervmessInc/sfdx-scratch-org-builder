@@ -27,6 +27,8 @@ Edit the follow value in the to enable specfic org setup features.
 
 **PACKAGE_IDS = []** List of managed package Ids to install into the Org.
 
+**PACKAGE_P_SETS = []** List of permission sets to assign to the user.
+
 **SRC_FOLDERS = []** List of metadata source folders (SRC_FOLDERS = ["force-app"])
 
 **BUILD_DATA_CMD = ""** Name of Anonymous APEX file to execute ("setupdata.apex")
