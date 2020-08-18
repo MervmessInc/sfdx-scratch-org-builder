@@ -30,6 +30,8 @@ DURATION = 10
 DEVHUB = "my-dev-hub-org"
 # List of managed package Ids to install into the Org.
 PACKAGE_IDS = []
+# Pre-Deploy use if metadata deploy sequence is important.
+PRE_DEPLOY = []
 # List of metadata source folders (SRC_FOLDERS = ["force-app"])
 SRC_FOLDERS = []
 # Anonymous APEX file to execute ("setupdata.apex")
@@ -238,6 +240,11 @@ def main():
         for pckg in PACKAGE_IDS:
             logging.error(f"~~~ Installing Packages {pckg} ~~~")
             install_package(args.alias, pckg)
+
+    if PRE_DEPLOY:
+        for fldr in PRE_DEPLOY:
+            logging.error(f"~~~ Installing Source ({fldr}) ~~~")
+            install_source(args.alias, f"{dir_path}/{fldr}")
 
     if PACKAGE_P_SETS:
         for pset in PACKAGE_P_SETS:
