@@ -6,6 +6,7 @@ import logging
 import os
 import sys
 
+import config
 import sfdx_cli_utils as sfdx
 
 # Set the working directory to the location of the file.
@@ -23,24 +24,14 @@ logger = logging.getLogger()
 
 # Config
 #
-
-# Default duration in days
-DURATION = 10
-# Default Devhub
-DEVHUB = "my-dev-hub-org"
-# List of managed package Ids to install into the Org.
-PACKAGE_IDS = []
-# Pre-Deploy use if metadata deploy sequence is important.
-PRE_DEPLOY = []
-# List of metadata source folders (SRC_FOLDERS = ["force-app"])
-SRC_FOLDERS = []
-# Anonymous APEX file to execute ("setupdata.apex")
-BUILD_DATA_CMD = ""
-# List of permission sets to assign to the user.
-PACKAGE_P_SETS = []
-#
-P_SETS = []
-#
+DURATION = config.DURATION
+DEVHUB = config.DEVHUB
+PACKAGE_IDS = config.PACKAGE_IDS
+PACKAGE_P_SETS = config.PACKAGE_P_SETS
+PRE_DEPLOY = config.PRE_DEPLOY
+SRC_FOLDERS = config.SRC_FOLDERS
+BUILD_DATA_CMD = config.BUILD_DATA_CMD
+P_SETS = config.P_SETS
 #
 
 parser = argparse.ArgumentParser(

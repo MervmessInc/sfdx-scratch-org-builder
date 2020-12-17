@@ -32,29 +32,29 @@ ENDC = "\033[m"
 #
 
 
-
 def clean_org_data(org):
     if "alias" not in org:
-        a = {"alias" : ""}
+        a = {"alias": ""}
         org.update(a)
 
     if "isDevHub" not in org:
-        dh = {"isDevHub" : False}
+        dh = {"isDevHub": False}
         org.update(dh)
 
     if "defaultMarker" not in org:
-        dm = {"defaultMarker" : ""}
+        dm = {"defaultMarker": ""}
         org.update(dm)
 
     if "status" not in org:
-        s = {"status" : "Active"}
+        s = {"status": "Active"}
         org.update(s)
 
     if "expirationDate" not in org:
-        dt = {"expirationDate" : ""}
+        dt = {"expirationDate": ""}
         org.update(dt)
 
     return org
+
 
 def get_org_list():
     if os.path.isfile("org_list.json"):
@@ -78,7 +78,7 @@ def get_orgs_map(org_list):
     index = 1
 
     for o in non_scratch_orgs:
-        org = {index : clean_org_data(o)}
+        org = {index: clean_org_data(o)}
         orgs.update(org)
         index = index + 1
 
@@ -88,7 +88,7 @@ def get_orgs_map(org_list):
         if clean_org['defaultMarker'] == "(U)":
             defaultusername = index
 
-        org = {index : clean_org}
+        org = {index: clean_org}
         orgs.update(org)
         index = index + 1
 
@@ -131,21 +131,20 @@ def print_org_details(idx, o):
         color = TRED
 
     print("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
-    .format(
-        idx,
-        o['defaultMarker'],
-        o['alias'],
-        o['username'],
-        o['expirationDate'],
-        color + o['status'] + ENDC))
+          .format(
+              idx,
+              o['defaultMarker'],
+              o['alias'],
+              o['username'],
+              o['expirationDate'],
+              color + o['status'] + ENDC))
 
 
 def print_org_list(orgs):
     print("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
-    .format("idx", "", "Alias", "Username", "Expiration", "Status"))
+          .format("idx", "", "Alias", "Username", "Expiration", "Status"))
     print("{:>3} {:<3} {:<20} {:<45} {:<12} {:<10}"
-    .format("---", "", "-----", "--------", "----------", "------"))
-
+          .format("---", "", "-----", "--------", "----------", "------"))
 
     for idx, o in orgs.items():
         print_org_details(idx, o)
@@ -172,7 +171,7 @@ def main():
     try:
         org_list = get_org_list()
         orgs, defaultusername = get_orgs_map(org_list)
-    
+
         choice = show_org_list(orgs)
 
         if choice.isnumeric():
@@ -189,7 +188,8 @@ def main():
             username = org['alias']
 
         print()
-        action = input(f"[D]eploy '{defaultpath}' or [O]pen '{username}' >  ") or 'O'
+        action = input(
+            f"[D]eploy '{defaultpath}' or [O]pen '{username}' >  ") or 'O'
 
         if action.upper() == 'D' or action.upper() == 'DEPLOY':
             logging.error(f"~~~ Installing Source ({defaultpath}) ~~~")
@@ -197,10 +197,10 @@ def main():
         elif action.upper() == 'O' or action.upper() == 'OPEN':
             logging.error(f"~~~ Opening Org ({username}) ~~~")
             sfdx.org_open(org['username'])
-        
 
     except Exception:
         traceback.print_exc()
+
 
 if __name__ == '__main__':
     main()
