@@ -172,7 +172,7 @@ def main():
     try:
         org_list = get_org_list()
         orgs, defaultusername = get_orgs_map(org_list)
-    
+
         choice = show_org_list(orgs)
 
         if choice.isnumeric():
@@ -197,7 +197,6 @@ def main():
         elif action.upper() == 'O' or action.upper() == 'OPEN':
             logging.error(f"~~~ Opening Org ({username}) ~~~")
             sfdx.org_open(org['username'])
-        
 
     except Exception:
         traceback.print_exc()

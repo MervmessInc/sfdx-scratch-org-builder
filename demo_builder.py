@@ -6,7 +6,7 @@ import logging
 import os
 import sys
 
-import org_config as cf
+import demo_config as cf
 import sfdx_cli_utils as sfdx
 
 # Set the working directory to the location of the file.

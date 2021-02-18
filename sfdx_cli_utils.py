@@ -8,6 +8,8 @@ import subprocess
 import sys
 import time
 
+import org_config as cf
+
 # Set the working directory to the location of the file.
 #
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -15,10 +17,10 @@ os.chdir(dir_path)
 
 # Config
 #
-SFDX_CMD = "sfdx.cmd"
+# sfdx command.
+SFDX_CMD = cf.SFDX_CMD
+SCRATCH_DEF = cf.SCRATCH_DEF
 SLEEP_SEC = 120
-SCRATCH_DEF = "config/project-scratch-def.json"
-#
 #
 
 
