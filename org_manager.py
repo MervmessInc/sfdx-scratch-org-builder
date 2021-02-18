@@ -198,7 +198,6 @@ def main():
             logging.error(f"~~~ Opening Org ({username}) ~~~")
             sfdx.org_open(org['username'])
 
-
     except Exception:
         traceback.print_exc()
 
