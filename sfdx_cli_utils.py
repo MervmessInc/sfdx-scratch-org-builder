@@ -17,6 +17,7 @@ os.chdir(dir_path)
 
 # Config
 #
+# sfdx command.
 SFDX_CMD = cf.SFDX_CMD
 SCRATCH_DEF = cf.SCRATCH_DEF
 SLEEP_SEC = 120
