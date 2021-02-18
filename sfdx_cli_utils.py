@@ -8,7 +8,7 @@ import subprocess
 import sys
 import time
 
-import config
+import org_config as cf
 
 # Set the working directory to the location of the file.
 #
@@ -17,8 +17,8 @@ os.chdir(dir_path)
 
 # Config
 #
-SFDX_CMD = config.SFDX_CMD
-SCRATCH_DEF = config.SCRATCH_DEF
+SFDX_CMD = cf.SFDX_CMD
+SCRATCH_DEF = cf.SCRATCH_DEF
 SLEEP_SEC = 120
 #
 

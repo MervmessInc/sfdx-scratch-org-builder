@@ -6,7 +6,7 @@ import logging
 import os
 import sys
 
-import config
+import org_config as cf
 import sfdx_cli_utils as sfdx
 
 # Set the working directory to the location of the file.
@@ -24,14 +24,14 @@ logger = logging.getLogger()
 
 # Config
 #
-DURATION = config.DURATION
-DEVHUB = config.DEVHUB
-PACKAGE_IDS = config.PACKAGE_IDS
-PACKAGE_P_SETS = config.PACKAGE_P_SETS
-PRE_DEPLOY = config.PRE_DEPLOY
-SRC_FOLDERS = config.SRC_FOLDERS
-BUILD_DATA_CMD = config.BUILD_DATA_CMD
-P_SETS = config.P_SETS
+DURATION = cf.DURATION
+DEVHUB = cf.DEVHUB
+PACKAGE_IDS = cf.PACKAGE_IDS
+PACKAGE_P_SETS = cf.PACKAGE_P_SETS
+PRE_DEPLOY = cf.PRE_DEPLOY
+SRC_FOLDERS = cf.SRC_FOLDERS
+BUILD_DATA_CMD = cf.BUILD_DATA_CMD
+P_SETS = cf.P_SETS
 #
 
 parser = argparse.ArgumentParser(
