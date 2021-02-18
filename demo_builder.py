@@ -1,5 +1,5 @@
-# org_builder.py
-__version__ = '0.0.2'
+# demo_builder.py
+__version__ = '0.0.1'
 
 import argparse
 import logging
