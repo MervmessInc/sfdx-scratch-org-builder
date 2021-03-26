@@ -17,7 +17,6 @@ os.chdir(dir_path)
 
 # Config
 #
-# sfdx command.
 SFDX_CMD = cf.SFDX_CMD
 SCRATCH_DEF = cf.SCRATCH_DEF
 SLEEP_SEC = 120
@@ -62,6 +61,30 @@ def check_install(org_alias, status_id):
         capture_output=True
     )
 
+    return parse_output(out)
+
+
+def create_community(org_alias, community, template):
+    logging.debug(f"create_community({org_alias}, {community}, {template})")
+
+    out = subprocess.run(
+        [
+            SFDX_CMD,
+            "force:community:create",
+            "-u",
+            f"{org_alias}",
+            "-n",
+            f"{community}",
+            "-t",
+            f"{template}",
+            "-p",
+            "demosite",
+            "--json"
+        ],
+        capture_output=True
+    )
+
+    time.sleep(120)
     return parse_output(out)
 
 
@@ -194,6 +217,25 @@ def org_open(org_user):
             "force:org:open",
             "-u",
             f"{org_user}",
+            "--json"
+        ],
+        capture_output=True
+    )
+
+    return parse_output(out)
+
+
+def publish_community(org_alias, community):
+    logging.debug(f"publish_community({org_alias}, {community})")
+
+    out = subprocess.run(
+        [
+            SFDX_CMD,
+            "force:community:publish",
+            "-u",
+            f"{org_alias}",
+            "-n",
+            f"{community}",
             "--json"
         ],
         capture_output=True
