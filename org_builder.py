@@ -30,8 +30,10 @@ PACKAGE_IDS = cf.PACKAGE_IDS
 PACKAGE_P_SETS = cf.PACKAGE_P_SETS
 PRE_DEPLOY = cf.PRE_DEPLOY
 SRC_FOLDERS = cf.SRC_FOLDERS
-BUILD_DATA_CMD = cf.BUILD_DATA_CMD
 P_SETS = cf.P_SETS
+TMPLT_NAME = cf.TMPLT_NAME
+BUILD_DATA_CMD = cf.BUILD_DATA_CMD
+SITE_NAME = cf.SITE_NAME
 POST_DEPLOY = cf.POST_DEPLOY
 #
 
@@ -187,6 +189,24 @@ def install_source(org_alias, src_folder):
     return True
 
 
+def publish_community(org_alias, community):
+
+    py_obj = sfdx.publish_community(org_alias, community)
+
+    if py_obj['status'] == 1:
+        message = py_obj['message']
+        logging.error(f"MESSAGE: {message}")
+        logging.warning(f"{py_obj}")
+        sys.exit(1)
+
+    if py_obj['status'] == 0:
+        logging.error(f"Name \t: {py_obj['result']['name']}")
+        logging.error(f"Status \t: {py_obj['result']['status']}")
+        logging.error(f"url \t: {py_obj['result']['url']}")
+
+    return True
+
+
 def user_details(org_alias):
 
     py_obj = sfdx.user_details(org_alias)
@@ -253,9 +273,18 @@ def main():
             logging.error(f"~~~ Installing Permission Set ({pset}) ~~~")
             install_permission_set(args.alias, pset)
 
+    if TMPLT_NAME:
+        logging.error(f"~~~ Create Community({SITE_NAME}) ~~~")
+        create_community(org_alias, SITE_NAME, TMPLT_NAME)
+
     if BUILD_DATA_CMD:
-        logging.error("~~~ Running Build data ~~~")
-        execute_script(args.alias, BUILD_DATA_CMD)
+        for script in BUILD_DATA_CMD:
+            logging.error(f"~~~ Running Build data({script}) ~~~")
+            execute_script(args.alias, script)
+
+    if SITE_NAME:
+        logging.error(f"~~~ Publish Community({SITE_NAME}) ~~~")
+        publish_community(args.alias, SITE_NAME)
 
     if POST_DEPLOY:
         for fldr in POST_DEPLOY:

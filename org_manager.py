@@ -95,24 +95,6 @@ def get_orgs_map(org_list):
     return orgs, defaultusername
 
 
-def install_source(org_alias, src_folder):
-
-    py_obj = sfdx.install_source(org_alias, src_folder)
-
-    if py_obj['status'] == 1:
-        message = py_obj['message']
-        logging.error(f"MESSAGE: {message}")
-        logging.warning(f"{py_obj}")
-        sys.exit(1)
-
-    if py_obj['status'] == 0:
-        for item in py_obj['result']['deployedSource']:
-            logging.info(
-                f"Type: {item['type']}, State: {item['state']}, Name: {item['fullName']}")
-
-    return True
-
-
 def parse_sfdx_project():
     defaultpath = ''
 
@@ -189,14 +171,13 @@ def main():
             username = org['alias']
 
         print()
-        action = input(f"[D]eploy '{defaultpath}' or [O]pen '{username}' >  ") or 'O'
+        action = input(f"[O]pen '{username}' >  ") or 'O'
 
-        if action.upper() == 'D' or action.upper() == 'DEPLOY':
-            logging.error(f"~~~ Installing Source ({defaultpath}) ~~~")
-            install_source(username, f"{defaultpath}")
-        elif action.upper() == 'O' or action.upper() == 'OPEN':
+        if action.upper() == 'O' or action.upper() == 'OPEN':
             logging.error(f"~~~ Opening Org ({username}) ~~~")
             sfdx.org_open(org['username'])
+        elif action.upper() == 'Q' or action.upper() == 'QUIT':
+            sys.exit(0)
 
     except Exception:
         traceback.print_exc()
