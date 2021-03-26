@@ -13,7 +13,7 @@ SCRATCH_DEF = "config/project-scratch-def.json"
 DURATION = 10
 
 # Default Devhub
-DEVHUB = "my-hub-org"
+DEVHUB = "my-dev-hub-org"
 
 # List of managed package Ids to install into the Org.
 PACKAGE_IDS = []
