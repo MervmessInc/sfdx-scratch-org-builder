@@ -3,7 +3,7 @@ org_builder.py is a Salesforce sfdx helper script that builds a fresh scratch or
 
 ## Usage
 ```
-$ py org_builder.py
+$ python org_builder.py
 usage: org_builder [-h] [-a ALIAS] [-d DURATION] [-v DEVHUB] [--debug]
 
 Python wrapper for a number of Salesforce CLI (sfdx) commands, to build and setup Scratch Orgs.
@@ -59,3 +59,8 @@ SITE_NAME = None
 # Post-Deploy use if metadata deploy sequence is important.
 POST_DEPLOY = []
 ```
+
+## Project dependencies
+
+- Salesforce Developer Experience ([SFDX](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)) CLI tools.
+- Python 3.8 : https://www.python.org/downloads/
