@@ -4,21 +4,25 @@ __version__ = '0.0.2'
 import json
 import logging
 import os
+import platform
 import subprocess
 import sys
 import time
-
-import org_config as cf
 
 # Set the working directory to the location of the file.
 #
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
+# sfdx command.
+if platform.system() == 'Linux':
+    SFDX_CMD = "sfdx"
+if platform.system() == 'Windows':
+    SFDX_CMD = "sfdx.cmd"
+
 # Config
 #
-SFDX_CMD = cf.SFDX_CMD
-SCRATCH_DEF = cf.SCRATCH_DEF
+SCRATCH_DEF = "config/project-scratch-def.json"
 SLEEP_SEC = 120
 #
 
@@ -26,14 +30,14 @@ SLEEP_SEC = 120
 def parse_output(cmd_output):
 
     logging.warning(f"ARGS: {cmd_output.args}")
-    logging.debug(f"STDOUT:\n{cmd_output.stdout}")
-    logging.debug(f"STDERR:\n{cmd_output.stderr}")
+    logging.debug(f"\n{cmd_output}\n")
 
     py_obj = {}
 
-    if cmd_output.stderr != b'':
-        logging.error(f"STDERR: {cmd_output.stderr}")
-        sys.exit(1)
+    if cmd_output.stderr != b'' and cmd_output.stdout == b'':
+        if "Warning: sfdx-cli update available" not in str(cmd_output.stderr):
+            logging.error(f"STDERR: {cmd_output.stderr}")
+            sys.exit(1)
 
     if cmd_output.stdout != b'':
         py_obj = json.loads(cmd_output.stdout)
@@ -240,6 +244,37 @@ def publish_community(org_alias, community):
         ],
         capture_output=True
     )
+
+    return parse_output(out)
+
+
+def source_push(org_alias, forceoverwrite):
+    logging.debug(f"source_push({org_alias}, {forceoverwrite})")
+
+    if forceoverwrite:
+        out = subprocess.run(
+            [
+                SFDX_CMD,
+                "force:source:push",
+                "-u",
+                f"{org_alias}",
+                "--json",
+                "-f",
+                "-g"
+            ],
+            capture_output=True
+        )
+    else:
+        out = subprocess.run(
+            [
+                SFDX_CMD,
+                "force:source:push",
+                "-u",
+                f"{org_alias}",
+                "--json"
+            ],
+            capture_output=True
+        )
 
     return parse_output(out)
 

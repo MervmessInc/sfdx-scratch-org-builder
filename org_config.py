@@ -1,11 +1,3 @@
-import platform
-
-# sfdx command.
-if platform.system() == 'Linux':
-    SFDX_CMD = "sfdx"
-if platform.system() == 'Windows':
-    SFDX_CMD = "sfdx.cmd"
-
 # Scratch Org Definition File
 SCRATCH_DEF = "config/project-scratch-def.json"
 

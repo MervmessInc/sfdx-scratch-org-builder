@@ -18,6 +18,7 @@ os.chdir(dir_path)
 # Set the Log level
 #
 logging.basicConfig(
+    filename='debug_org_manager.log',
     level=logging.ERROR,
     format='%(asctime)s - %(message)s',
     datefmt='%d-%b-%y %H:%M:%S')

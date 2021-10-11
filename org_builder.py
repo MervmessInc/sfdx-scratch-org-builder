@@ -207,6 +207,24 @@ def publish_community(org_alias, community):
     return True
 
 
+def source_push(org_alias):
+
+    py_obj = sfdx.source_push(org_alias, True)
+
+    if py_obj['status'] == 1:
+        logging.warning(f"{py_obj}")
+        message = py_obj['message']
+        logging.error(f"MESSAGE: {message}")
+        sys.exit(1)
+
+    if py_obj['status'] == 0:
+        for item in py_obj['result']['pushedSource']:
+            logging.info(
+                f"Type: {item['type']}, State: {item['state']}, Name: {item['fullName']}")
+
+    return True
+    
+
 def user_details(org_alias):
 
     py_obj = sfdx.user_details(org_alias)
@@ -262,6 +280,9 @@ def main():
         for pset in PACKAGE_P_SETS:
             logging.error(f"~~~ Installing Permission Set ({pset}) ~~~")
             install_permission_set(args.alias, pset)
+
+    logging.error(f"~~~ Installing Source ~~~")
+    source_push(args.alias)
 
     if SRC_FOLDERS:
         for fldr in SRC_FOLDERS:
