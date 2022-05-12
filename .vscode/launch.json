@@ -1,0 +1,44 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: org_builder",
+            "type": "python",
+            "request": "launch",
+            "program": "org_builder.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "-a",
+                "merv-dev",
+                "-d",
+                "30",
+                "-v",
+                "hub-org",
+                "--debug"
+            ]
+        },
+        {
+            "name": "Python: app.py",
+            "type": "python",
+            "request": "launch",
+            "program": "app.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--debug"
+            ]
+        }
+    ]
+}

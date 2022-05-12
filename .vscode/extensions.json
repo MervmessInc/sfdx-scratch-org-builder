@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "njpwerner.autodocstring",
+        "aaron-bond.better-comments",
+        "usernamehw.errorlens",
+        "eamodio.gitlens",
+        "visualstudioexptteam.vscodeintellicode",
+        "ms-python.python",
+        "njqdev.vscode-python-typehint",
+        "TabNine.tabnine-vscode"
+    ]
+}
