@@ -45,7 +45,9 @@ def clean_org_data(org):
 
 def get_org_list():
     if os.path.isfile("./org_list.json"):
-        org_list = json.load(open("./org_list.json", "r"))
+        with open("./org_list.json", "r") as jsonfile:
+            org_list = json.load(jsonfile)
+
         t = threading.Thread(target=update_org_list)
         t.start()
 
@@ -138,7 +140,8 @@ def show_org_list(orgs):
 
 def update_org_list():
     org_list = sfdx.org_list()
-    json.dump(org_list, open("./org_list.json", "w"))
+    with open("./org_list.json", "w") as jsonfile:
+        json.dump(org_list, jsonfile)
 
     return org_list
 

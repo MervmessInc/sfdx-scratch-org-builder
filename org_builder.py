@@ -5,14 +5,9 @@ import argparse
 import logging
 import os
 import sys
+import yaml
 
-import org_config as cf
 import sf_org_manager.sfdx_cli_utils as sfdx
-
-# Set the working directory to the location of the file.
-#
-dir_path = os.path.dirname(os.path.realpath(__file__))
-os.chdir(dir_path)
 
 # Set the Log level
 #
@@ -23,23 +18,31 @@ logger = logging.getLogger()
 
 # Config
 #
-DURATION = cf.DURATION
-DEVHUB = cf.DEVHUB
-PACKAGE_IDS = cf.PACKAGE_IDS
-PACKAGE_P_SETS = cf.PACKAGE_P_SETS
-PRE_DEPLOY = cf.PRE_DEPLOY
-SRC_FOLDERS = cf.SRC_FOLDERS
-P_SETS = cf.P_SETS
-TMPLT_NAME = cf.TMPLT_NAME
-BUILD_DATA_CMD = cf.BUILD_DATA_CMD
-SITE_NAME = cf.SITE_NAME
-POST_DEPLOY = cf.POST_DEPLOY
+if os.path.isfile("./org_config.yml"):
+    with open("org_config.yml", "r") as ymlfile:
+        cfg = yaml.safe_load(ymlfile)
+else:
+    logging.error("Missing org_config.yml")
+    sys.exit(1)
+
+DURATION = cfg["DURATION"]
+DEVHUB = cfg["DEVHUB"]
+PACKAGE_IDS = cfg["PACKAGE_IDS"]
+PACKAGE_P_SETS = cfg["PACKAGE_P_SETS"]
+PRE_DEPLOY = cfg["PRE_DEPLOY"]
+SRC_FOLDERS = cfg["SRC_FOLDERS"]
+P_SETS = cfg["P_SETS"]
+TMPLT_NAME = cfg["TMPLT_NAME"]
+BUILD_DATA_CMD = cfg["BUILD_DATA_CMD"]
+SITE_NAME = cfg["SITE_NAME"]
+POST_DEPLOY = cfg["POST_DEPLOY"]
 #
 
 parser = argparse.ArgumentParser(
     prog="org_builder",
     description="""
-Python wrapper for a number of Salesforce CLI (sfdx) commands, to build and setup Scratch Orgs.
+Python wrapper for a number of Salesforce CLI (sfdx) commands,
+ to build and setup Scratch Orgs.
     """,
 )
 
