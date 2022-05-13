@@ -16,24 +16,22 @@
             "name": "Python: org_builder",
             "type": "python",
             "request": "launch",
-            "program": "org_builder.py",
+            "program": "sf-org_builder.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
                 "-a",
                 "merv-dev",
-                "-d",
-                "30",
                 "-v",
                 "hub-org",
                 "--debug"
             ]
         },
         {
-            "name": "Python: app.py",
+            "name": "Python: org_manager",
             "type": "python",
             "request": "launch",
-            "program": "app.py",
+            "program": "sf-orgs_app.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [

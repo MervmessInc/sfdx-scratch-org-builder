@@ -7,7 +7,7 @@ import os
 import sys
 import yaml
 
-import sf_org_manager.sfdx_cli_utils as sfdx
+from . import sfdx_cli_utils as sfdx
 
 # Set the Log level
 #
@@ -15,28 +15,6 @@ logging.basicConfig(
     level=logging.ERROR, format="%(asctime)s - %(message)s", datefmt="%d-%b-%y %H:%M:%S"
 )
 logger = logging.getLogger()
-
-# Config
-#
-if os.path.isfile("./org_config.yml"):
-    with open("org_config.yml", "r") as ymlfile:
-        cfg = yaml.safe_load(ymlfile)
-else:
-    logging.error("Missing org_config.yml")
-    sys.exit(1)
-
-DURATION = cfg["DURATION"]
-DEVHUB = cfg["DEVHUB"]
-PACKAGE_IDS = cfg["PACKAGE_IDS"]
-PACKAGE_P_SETS = cfg["PACKAGE_P_SETS"]
-PRE_DEPLOY = cfg["PRE_DEPLOY"]
-SRC_FOLDERS = cfg["SRC_FOLDERS"]
-P_SETS = cfg["P_SETS"]
-TMPLT_NAME = cfg["TMPLT_NAME"]
-BUILD_DATA_CMD = cfg["BUILD_DATA_CMD"]
-SITE_NAME = cfg["SITE_NAME"]
-POST_DEPLOY = cfg["POST_DEPLOY"]
-#
 
 parser = argparse.ArgumentParser(
     prog="org_builder",
@@ -47,21 +25,30 @@ Python wrapper for a number of Salesforce CLI (sfdx) commands,
 )
 
 
-def setup_args():
-    logging.debug("setup_args()")
+def get_config():
+    if os.path.isfile("./org_config.yml"):
+        with open("org_config.yml", "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
+    else:
+        logging.error("Missing org_config.yml")
+        sys.exit(1)
 
+    return cfg
+
+
+def setup_args(cfg):
     parser.add_argument("-a", "--alias", help="Scratch Org user alias")
     parser.add_argument(
         "-d",
         "--duration",
-        help=f"Number of days org will last [1..30]. Default: {DURATION}",
-        default=DURATION,
+        help=f"Number of days org will last [1..30]. Default: {cfg['DURATION']}",
+        default=cfg["DURATION"],
     )
     parser.add_argument(
         "-v",
         "--devhub",
-        help=f"Target dev hub username or alias. Default: {DEVHUB}",
-        default=DEVHUB,
+        help=f"Target dev hub username or alias. Default: {cfg['DEVHUB']}",
+        default=cfg["DEVHUB"],
     )
     parser.add_argument("--debug", help="Turn on debug messages", action="store_true")
 
@@ -269,7 +256,10 @@ def user_details(org_alias):
 def main():
     logging.debug("main()")
 
-    setup_args()
+    cfg = get_config()
+    dir_path = os.getcwd()
+
+    setup_args(cfg)
     args = parser.parse_args()
 
     if args.alias is None:
@@ -290,52 +280,52 @@ def main():
         logging.error("~~~ Create New Scratch Org ~~~")
         username = create_sratch_org(args.alias, args.duration, args.devhub)
 
-    if PACKAGE_IDS:
+    if cfg["PACKAGE_IDS"]:
         installed = package_list(args.alias)
 
-        for pckg in PACKAGE_IDS:
+        for pckg in cfg["PACKAGE_IDS"]:
             if pckg not in installed:
                 logging.error(f"~~~ Installing Packages {pckg} ~~~")
                 install_package(args.alias, pckg)
 
-    if PRE_DEPLOY:
-        for fldr in PRE_DEPLOY:
+    if cfg["PRE_DEPLOY"]:
+        for fldr in cfg["PRE_DEPLOY"]:
             logging.error(f"~~~ Installing Source ({fldr}) ~~~")
             install_source(args.alias, f"{dir_path}/{fldr}")
 
-    if PACKAGE_P_SETS:
-        for pset in PACKAGE_P_SETS:
+    if cfg["PACKAGE_P_SETS"]:
+        for pset in cfg["PACKAGE_P_SETS"]:
             logging.error(f"~~~ Installing Permission Set ({pset}) ~~~")
             install_permission_set(args.alias, pset)
 
     logging.error("~~~ Installing Source ~~~")
     source_push(args.alias)
 
-    if SRC_FOLDERS:
-        for fldr in SRC_FOLDERS:
+    if cfg["SRC_FOLDERS"]:
+        for fldr in cfg["SRC_FOLDERS"]:
             logging.error(f"~~~ Installing Source ({fldr}) ~~~")
             install_source(args.alias, f"{dir_path}/{fldr}")
 
-    if P_SETS:
-        for pset in P_SETS:
+    if cfg["P_SETS"]:
+        for pset in cfg["P_SETS"]:
             logging.error(f"~~~ Installing Permission Set ({pset}) ~~~")
             install_permission_set(args.alias, pset)
 
-    if TMPLT_NAME:
-        logging.error(f"~~~ Create Community({SITE_NAME}) ~~~")
+    if cfg["TMPLT_NAME"]:
+        logging.error(f"~~~ Create Community({cfg['SITE_NAME']}) ~~~")
         # create_community(org_alias, SITE_NAME, TMPLT_NAME)
 
-    if BUILD_DATA_CMD:
-        for script in BUILD_DATA_CMD:
+    if cfg["BUILD_DATA_CMD"]:
+        for script in cfg["BUILD_DATA_CMD"]:
             logging.error(f"~~~ Running Build data({script}) ~~~")
             execute_script(args.alias, script)
 
-    if SITE_NAME:
-        logging.error(f"~~~ Publish Community({SITE_NAME}) ~~~")
-        publish_community(args.alias, SITE_NAME)
+    if cfg["SITE_NAME"]:
+        logging.error(f"~~~ Publish Community({cfg['SITE_NAME']}) ~~~")
+        publish_community(args.alias, cfg["SITE_NAME"])
 
-    if POST_DEPLOY:
-        for fldr in POST_DEPLOY:
+    if cfg["POST_DEPLOY"]:
+        for fldr in cfg["POST_DEPLOY"]:
             logging.error(f"~~~ Installing Source ({fldr}) ~~~")
             install_source(args.alias, f"{dir_path}/{fldr}")
 
@@ -343,7 +333,3 @@ def main():
     user_details(args.alias)
 
     logging.error("~~~ Scratch Org Complete ~~~")
-
-
-if __name__ == "__main__":
-    main()

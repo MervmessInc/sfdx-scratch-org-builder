@@ -26,10 +26,10 @@ P_SETS: []
 BUILD_DATA_CMD: []
 
 # Name of template to use to create the community
-TMPLT_NAME: None
+TMPLT_NAME:
 
 # Name of the Lightning community that you want to publish.
-SITE_NAME: None
+SITE_NAME:
 
 # Post-Deploy use if metadata deploy sequence is important.
 POST_DEPLOY: []
