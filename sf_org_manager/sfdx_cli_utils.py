@@ -14,12 +14,6 @@ if platform.system() == "Linux":
 if platform.system() == "Windows":
     SFDX_CMD = "sfdx.cmd"
 
-# sf command.
-if platform.system() == "Linux":
-    SF_CMD = "sf"
-if platform.system() == "Windows":
-    SF_CMD = "sf.cmd"
-
 # Config
 #
 SCRATCH_DEF = "config/project-scratch-def.json"
@@ -203,10 +197,6 @@ def org_list():
         [SFDX_CMD, "force:org:list", "--all", "--json"], capture_output=True
     )
 
-    # out = subprocess.run(
-    #    [SF_CMD, "env", "list", "--all", "--json"], capture_output=True
-    # )
-
     return parse_output(out)
 
 
@@ -216,10 +206,6 @@ def org_open(org_user: str):
     out = subprocess.run(
         [SFDX_CMD, "force:org:open", "-u", f"{org_user}", "--json"], capture_output=True
     )
-
-    # out = subprocess.run(
-    #    [SF_CMD, "env", "open", "-e", f"{org_user}", "--json"], capture_output=True
-    # )
 
     return parse_output(out)
 
