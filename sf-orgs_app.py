@@ -1,7 +1,4 @@
-import sf_org_manager as org_manager
-import sf_org_manager.command_line as cmdln
+import sf_org_manager.org_manager as org_manager
 
 
-# org_manager.org_manager.main()
-# org_manager.command_line.main()
-cmdln.main()
+org_manager.main()
