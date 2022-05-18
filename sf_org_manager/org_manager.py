@@ -162,6 +162,24 @@ def show_org_list(orgs):
     return choice
 
 
+def user_details(org_alias):
+
+    py_obj = sfdx.user_details(org_alias)
+
+    if py_obj["status"] == 1:
+        message = py_obj["message"]
+        logging.error(f"MESSAGE: {message}")
+        logging.warning(f"{py_obj}")
+        sys.exit(1)
+
+    if py_obj["status"] == 0:
+        print(f"OrgId \t\t: {py_obj['result']['orgId']}")
+        print(f"Username \t: {py_obj['result']['username']}")
+        print(f"Url \t\t: {py_obj['result']['instanceUrl']}")
+        print(f"Alias \t\t: {py_obj['result']['alias']}")
+        print(f"Token \t\t: {py_obj['result']['accessToken']}")
+
+
 def update_org_list():
     org_list = sfdx.org_list()
     with open("./org_list.json", "w") as jsonfile:
@@ -200,6 +218,9 @@ def main():
             username = org["alias"]
 
         print()
+        user_details(username)
+        print()
+
         action = input(f"[O]pen '{username}' >  ") or "O"
 
         if action.upper() == "O" or action.upper() == "OPEN":
