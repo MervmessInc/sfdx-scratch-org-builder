@@ -16,7 +16,6 @@ if platform.system() == "Windows":
 
 # Config
 #
-SCRATCH_DEF = "config/project-scratch-def.json"
 SLEEP_SEC = 120
 #
 
@@ -86,7 +85,7 @@ def create_community(org_alias: str, community: str, template: str):
     return parse_output(out)
 
 
-def create_sratch_org(org_alias: str, duration: str, devhub: str):
+def create_sratch_org(org_alias: str, duration: str, devhub: str, scratch_def: str):
     logging.debug(f"create_sratch_org({org_alias}, {duration}, {devhub})")
 
     out = subprocess.run(
@@ -94,7 +93,7 @@ def create_sratch_org(org_alias: str, duration: str, devhub: str):
             SFDX_CMD,
             "force:org:create",
             "-f",
-            f"{SCRATCH_DEF}",
+            f"{scratch_def}",
             "-s",
             "-d",
             f"{duration}",

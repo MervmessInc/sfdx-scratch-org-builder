@@ -90,9 +90,9 @@ def check_org(org_alias):
     return "", False
 
 
-def create_sratch_org(org_alias, duration, devhub):
+def create_sratch_org(org_alias, duration, devhub, scratch_def):
 
-    py_obj = sfdx.create_sratch_org(org_alias, duration, devhub)
+    py_obj = sfdx.create_sratch_org(org_alias, duration, devhub, scratch_def)
 
     if py_obj["status"] == 1:
         message = py_obj["message"]
@@ -278,7 +278,9 @@ def main():
 
     if not org_exists:
         logging.error("~~~ Create New Scratch Org ~~~")
-        username = create_sratch_org(args.alias, args.duration, args.devhub)
+        username = create_sratch_org(
+            args.alias, args.duration, args.devhub, cfg["SCRATCH_DEF"]
+        )
 
     if cfg["PACKAGE_IDS"]:
         installed = package_list(args.alias)
