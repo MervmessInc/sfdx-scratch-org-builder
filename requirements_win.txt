@@ -8,9 +8,11 @@ asciimatics==1.14.0
     # via -r requirements.in
 future==0.18.2
     # via asciimatics
-pillow==9.2.0
+pillow==9.1.0
     # via asciimatics
 pyfiglet==0.8.post1
+    # via asciimatics
+pywin32==304
     # via asciimatics
 wcwidth==0.2.5
     # via asciimatics
