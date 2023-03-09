@@ -91,11 +91,13 @@ def create_sratch_org(org_alias: str, duration: str, devhub: str, scratch_def: s
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:org:create",
+            "org",
+            "create",
+            "scratch",
             "-f",
             f"{scratch_def}",
-            "-s",
             "-d",
+            "-y",
             f"{duration}",
             "-a",
             f"{org_alias}",
@@ -115,10 +117,11 @@ def execute_script(org_alias: str, apex_file: str):
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:apex:execute",
+            "apex",
+            "run",
             "-f",
             f"{apex_file}",
-            "-u",
+            "-o",
             f"{org_alias}",
             "--json",
         ],
@@ -134,12 +137,13 @@ def install_package(org_alias: str, package_id: str):
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:package:install",
-            "--package",
+            "package",
+            "install",
+            "-p",
             f"{package_id}",
-            "-u",
+            "-o",
             f"{org_alias}",
-            "--noprompt",
+            "-r",
             "--json",
         ],
         capture_output=True,
@@ -154,10 +158,12 @@ def install_permission_set(org_alias: str, pset: str):
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:user:permset:assign",
+            "org",
+            "assign",
+            "permset",
             "-n",
             f"{pset}",
-            "-u",
+            "-o",
             f"{org_alias}",
             "--json",
         ],
@@ -193,7 +199,14 @@ def org_list():
     logging.debug("org_list()")
 
     out = subprocess.run(
-        [SFDX_CMD, "force:org:list", "--all", "--json"], capture_output=True
+        [
+            SFDX_CMD,
+            "org",
+            "list",
+            "--all",
+            "--json",
+        ],
+        capture_output=True,
     )
 
     return parse_output(out)
@@ -203,7 +216,15 @@ def org_open(org_user: str):
     logging.debug(f"open_org({org_user})")
 
     out = subprocess.run(
-        [SFDX_CMD, "force:org:open", "-u", f"{org_user}", "--json"], capture_output=True
+        [
+            SFDX_CMD,
+            "org",
+            "open",
+            "-o",
+            f"{org_user}",
+            "--json",
+        ],
+        capture_output=True,
     )
 
     return parse_output(out)
@@ -215,8 +236,10 @@ def package_list(org_alias: str):
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:package:installed:list",
-            "-u",
+            "package",
+            "installed",
+            "list",
+            "-o",
             f"{org_alias}",
             "--json",
         ],
@@ -250,12 +273,30 @@ def source_push(org_alias: str, forceoverwrite: bool):
 
     if forceoverwrite:
         out = subprocess.run(
-            [SFDX_CMD, "force:source:push", "-u", f"{org_alias}", "--json", "-f", "-g"],
+            [
+                SFDX_CMD,
+                "force",
+                "source",
+                "push",
+                "-u",
+                f"{org_alias}",
+                "--json",
+                "-f",
+                "-g",
+            ],
             capture_output=True,
         )
     else:
         out = subprocess.run(
-            [SFDX_CMD, "force:source:push", "-u", f"{org_alias}", "--json"],
+            [
+                SFDX_CMD,
+                "force",
+                "source",
+                "push",
+                "-u",
+                f"{org_alias}",
+                "--json",
+            ],
             capture_output=True,
         )
 
@@ -266,7 +307,15 @@ def user_details(org_alias: str):
     logging.debug(f"user_details({org_alias})")
 
     out = subprocess.run(
-        [SFDX_CMD, "force:user:display", "-u", f"{org_alias}", "--json"],
+        [
+            SFDX_CMD,
+            "org",
+            "display",
+            "user",
+            "-o",
+            f"{org_alias}",
+            "--json",
+        ],
         capture_output=True,
     )
 
