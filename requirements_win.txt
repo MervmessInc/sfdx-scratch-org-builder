@@ -14,5 +14,5 @@ pyfiglet==0.8.post1
     # via asciimatics
 pywin32==304
     # via asciimatics
-wcwidth==0.2.5
+wcwidth==0.2.6
     # via asciimatics
