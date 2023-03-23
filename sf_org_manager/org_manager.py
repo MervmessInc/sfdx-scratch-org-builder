@@ -126,27 +126,16 @@ def print_org_details(idx, o):
         color = TRED
 
     print(
-        "{:>3} {:<3} {:<30} {:<45} {:<12} {:<10}".format(
-            idx,
-            o["defaultMarker"],
-            o["alias"],
-            o["username"],
-            o["expirationDate"],
-            color + o["status"] + ENDC,
-        )
+        f"{idx:>3} {o['defaultMarker']:<3} {o['alias']:<30} {o['username']:<45} {o['expirationDate']:<12} {color}{o['status']:<10}{ENDC}"
     )
 
 
 def print_org_list(orgs):
     print(
-        "{:>3} {:<3} {:<30} {:<45} {:<12} {:<10}".format(
-            "idx", "", "Alias", "Username", "Expiration", "Status"
-        )
+        f"{'idx':>3} {'':<3} {'Alias':<30} {'Username':<45} {'Expiration':<12} {'Status':<10}"
     )
     print(
-        "{:>3} {:<3} {:<30} {:<45} {:<12} {:<10}".format(
-            "---", "", "-----", "--------", "----------", "------"
-        )
+        f"{'---':>3} {'':<3} {'-----':<30} {'--------':<45} {'----------':<12} {'------':<10}"
     )
 
     for idx, o in orgs.items():
