@@ -6,7 +6,6 @@
         "eamodio.gitlens",
         "visualstudioexptteam.vscodeintellicode",
         "ms-python.python",
-        "njqdev.vscode-python-typehint",
-        "TabNine.tabnine-vscode"
+        "njqdev.vscode-python-typehint"
     ]
 }
