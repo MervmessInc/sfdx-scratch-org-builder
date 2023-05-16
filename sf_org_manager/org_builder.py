@@ -51,6 +51,7 @@ def setup_args(cfg):
         default=cfg["DEVHUB"],
     )
     parser.add_argument("--debug", help="Turn on debug messages", action="store_true")
+    parser.add_argument("--skip", help="Skip source deploy", action="store_true")
 
 
 def check_install(org_alias, status_id):
@@ -300,8 +301,11 @@ def main():
             logging.error(f"~~~ Installing Permission Set ({pset}) ~~~")
             install_permission_set(args.alias, pset)
 
-    logging.error("~~~ Installing Source ~~~")
-    source_push(args.alias)
+    if args.skip:
+        logging.error("~~~ Skip Source Deploy ~~~")
+    else:
+        logging.error("~~~ Source Deploy ~~~")
+        source_push(args.alias)
 
     if cfg["SRC_FOLDERS"]:
         for fldr in cfg["SRC_FOLDERS"]:
