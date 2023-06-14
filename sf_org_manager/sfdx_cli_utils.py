@@ -21,7 +21,6 @@ SLEEP_SEC = 120
 
 
 def parse_output(cmd_output):
-
     logging.warning(f"ARGS: {cmd_output.args}")
     logging.debug(f"\n{cmd_output}\n")
 
@@ -48,8 +47,10 @@ def check_install(org_alias: str, status_id: str):
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:package:install:report",
-            "-u",
+            "package",
+            "install",
+            "report",
+            "-o",
             f"{org_alias}",
             "-i",
             f"{status_id}",
@@ -179,14 +180,14 @@ def install_source(org_alias: str, src_folder: str):
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:source:deploy",
-            "-p",
+            "project",
+            "deploy",
+            "start",
+            "-d",
             src_folder,
-            "-u",
+            "-o",
             f"{org_alias}",
             "-g",
-            "--loglevel",
-            "fatal",
             "--json",
         ],
         capture_output=True,
@@ -275,13 +276,13 @@ def source_push(org_alias: str, forceoverwrite: bool):
         out = subprocess.run(
             [
                 SFDX_CMD,
-                "force",
-                "source",
-                "push",
-                "-u",
+                "project",
+                "deploy",
+                "start",
+                "-o",
                 f"{org_alias}",
                 "--json",
-                "-f",
+                "-c",
                 "-g",
             ],
             capture_output=True,
@@ -290,10 +291,10 @@ def source_push(org_alias: str, forceoverwrite: bool):
         out = subprocess.run(
             [
                 SFDX_CMD,
-                "force",
-                "source",
-                "push",
-                "-u",
+                "project",
+                "deploy",
+                "start",
+                "-o",
                 f"{org_alias}",
                 "--json",
             ],

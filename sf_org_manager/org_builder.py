@@ -51,10 +51,10 @@ def setup_args(cfg):
         default=cfg["DEVHUB"],
     )
     parser.add_argument("--debug", help="Turn on debug messages", action="store_true")
+    parser.add_argument("--skip", help="Skip source deploy", action="store_true")
 
 
 def check_install(org_alias, status_id):
-
     py_obj = sfdx.check_install(org_alias, status_id)
 
     if py_obj["status"] == 1:
@@ -72,7 +72,6 @@ def check_install(org_alias, status_id):
 
 
 def check_org(org_alias):
-
     py_obj = sfdx.org_list()
 
     scratch_orgs = py_obj["result"]["scratchOrgs"]
@@ -91,7 +90,6 @@ def check_org(org_alias):
 
 
 def create_sratch_org(org_alias, duration, devhub, scratch_def):
-
     py_obj = sfdx.create_sratch_org(org_alias, duration, devhub, scratch_def)
 
     if py_obj["status"] == 1:
@@ -107,7 +105,6 @@ def create_sratch_org(org_alias, duration, devhub, scratch_def):
 
 
 def execute_script(org_alias, apex_file):
-
     py_obj = sfdx.execute_script(org_alias, apex_file)
 
     if py_obj["status"] == 1:
@@ -126,7 +123,6 @@ def execute_script(org_alias, apex_file):
 
 
 def install_package(org_alias, package_id):
-
     py_obj = sfdx.install_package(org_alias, package_id)
 
     if py_obj["status"] == 1:
@@ -144,7 +140,6 @@ def install_package(org_alias, package_id):
 
 
 def install_permission_set(org_alias, pset):
-
     py_obj = sfdx.install_permission_set(org_alias, pset)
 
     if py_obj["status"] == 1:
@@ -159,7 +154,6 @@ def install_permission_set(org_alias, pset):
 
 
 def install_source(org_alias, src_folder):
-
     py_obj = sfdx.install_source(org_alias, src_folder)
 
     if py_obj["status"] == 1:
@@ -178,7 +172,6 @@ def install_source(org_alias, src_folder):
 
 
 def package_list(org_alias):
-
     py_obj = sfdx.package_list(org_alias)
 
     packages = []
@@ -200,7 +193,6 @@ def package_list(org_alias):
 
 
 def publish_community(org_alias, community):
-
     py_obj = sfdx.publish_community(org_alias, community)
 
     if py_obj["status"] == 1:
@@ -218,7 +210,6 @@ def publish_community(org_alias, community):
 
 
 def source_push(org_alias):
-
     py_obj = sfdx.source_push(org_alias, True)
 
     if py_obj["status"] == 1:
@@ -228,16 +219,19 @@ def source_push(org_alias):
         sys.exit(1)
 
     if py_obj["status"] == 0:
-        for item in py_obj["result"]["pushedSource"]:
+        for item in py_obj["result"]["details"]["componentFailures"]:
             logging.info(
-                f"Type: {item['type']}, State: {item['state']}, Name: {item['fullName']}"
+                f"Type: {item['componentType']}, Success: {item['success']}, Name: {item['fullName']}"
+            )
+        for item in py_obj["result"]["details"]["componentSuccesses"]:
+            logging.info(
+                f"Type: {item['componentType']}, Success: {item['success']}, Name: {item['fullName']}"
             )
 
     return True
 
 
 def user_details(org_alias):
-
     py_obj = sfdx.user_details(org_alias)
 
     if py_obj["status"] == 1:
@@ -300,8 +294,11 @@ def main():
             logging.error(f"~~~ Installing Permission Set ({pset}) ~~~")
             install_permission_set(args.alias, pset)
 
-    logging.error("~~~ Installing Source ~~~")
-    source_push(args.alias)
+    if args.skip:
+        logging.error("~~~ Skip Source Deploy ~~~")
+    else:
+        logging.error("~~~ Source Deploy ~~~")
+        source_push(args.alias)
 
     if cfg["SRC_FOLDERS"]:
         for fldr in cfg["SRC_FOLDERS"]:
