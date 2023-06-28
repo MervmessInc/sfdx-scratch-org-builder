@@ -1,5 +1,5 @@
 # org_builder.py
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 import argparse
 import logging
@@ -25,12 +25,12 @@ Python wrapper for a number of Salesforce CLI (sfdx) commands,
 )
 
 
-def get_config():
-    if os.path.isfile("./org_config.yml"):
-        with open("org_config.yml", "r") as ymlfile:
+def get_config(config_file):
+    if os.path.isfile(config_file):
+        with open(config_file, "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
     else:
-        logging.error("Missing org_config.yml")
+        logging.error(f"Missing {config_file}")
         sys.exit(1)
 
     return cfg
@@ -75,6 +75,7 @@ def check_org(org_alias):
     py_obj = sfdx.org_list()
 
     scratch_orgs = py_obj["result"]["scratchOrgs"]
+
     for org in scratch_orgs:
         try:
             if org_alias == org["alias"] and not org["isExpired"]:
@@ -89,8 +90,10 @@ def check_org(org_alias):
     return "", False
 
 
-def create_sratch_org(org_alias, duration, devhub, scratch_def):
-    py_obj = sfdx.create_sratch_org(org_alias, duration, devhub, scratch_def)
+def create_sratch_org(org_alias, duration, devhub, scratch_def, use_namepspace):
+    py_obj = sfdx.create_sratch_org(
+        org_alias, duration, devhub, scratch_def, use_namepspace
+    )
 
     if py_obj["status"] == 1:
         message = py_obj["message"]
@@ -110,14 +113,11 @@ def execute_script(org_alias, apex_file):
     if py_obj["status"] == 1:
         message = py_obj["message"]
         logging.error(f"MESSAGE: {message}")
-        logging.error(
-            f"CompileProblem: {py_obj['result']['compileProblem']}\nExceptionMessage: {py_obj['result']['exceptionMessage']}"
-        )
         logging.warning(f"{py_obj}")
         sys.exit(1)
 
     if py_obj["status"] == 0:
-        logging.warning(f"{py_obj}")
+        logging.debug(f"{py_obj}")
 
     return True
 
@@ -211,22 +211,37 @@ def publish_community(org_alias, community):
 
 def source_push(org_alias):
     py_obj = sfdx.source_push(org_alias, True)
+    logging.debug(f"{py_obj}")
 
     if py_obj["status"] == 1:
-        logging.warning(f"{py_obj}")
-        message = py_obj["message"]
-        logging.error(f"MESSAGE: {message}")
+        if "message" in py_obj.keys():
+            logging.info(f"MESSAGE: {py_obj['message']}")
+
+        if "result" in py_obj.keys():
+            if "details" in py_obj["result"].keys():
+                message = py_obj["result"]["details"]
+                for item in message["componentFailures"]:
+                    logging.error(
+                        f"Type: {item['componentType']}, Error: {item['problem']}, Item: {item['fileName']}"
+                    )
+                for item in message["componentSuccesses"]:
+                    logging.debug(
+                        f"Type: {item['componentType']}, Filename: {item['fileName']}, Name: {item['fullName']}"
+                    )
+
         sys.exit(1)
 
     if py_obj["status"] == 0:
-        for item in py_obj["result"]["details"]["componentFailures"]:
-            logging.info(
-                f"Type: {item['componentType']}, Success: {item['success']}, Name: {item['fullName']}"
-            )
-        for item in py_obj["result"]["details"]["componentSuccesses"]:
-            logging.info(
-                f"Type: {item['componentType']}, Success: {item['success']}, Name: {item['fullName']}"
-            )
+        if "result" in py_obj.keys():
+            if "status" in py_obj["result"].keys():
+                logging.info(f"STATUS: {py_obj['result']['status']}")
+
+            if "details" in py_obj["result"].keys():
+                message = py_obj["result"]["details"]
+                for item in message["componentSuccesses"]:
+                    logging.info(
+                        f"Type: {item['componentType']}, Filename: {item['fileName']}, Name: {item['fullName']}"
+                    )
 
     return True
 
@@ -247,10 +262,10 @@ def user_details(org_alias):
         logging.error(f"Alias \t: {py_obj['result']['alias']}")
 
 
-def main():
+def main(config_file="./org_config.yml"):
     logging.debug("main()")
 
-    cfg = get_config()
+    cfg = get_config(config_file)
     dir_path = os.getcwd()
 
     setup_args(cfg)
@@ -273,7 +288,11 @@ def main():
     if not org_exists:
         logging.error("~~~ Create New Scratch Org ~~~")
         username = create_sratch_org(
-            args.alias, args.duration, args.devhub, cfg["SCRATCH_DEF"]
+            args.alias,
+            args.duration,
+            args.devhub,
+            cfg["SCRATCH_DEF"],
+            cfg["USE_NAMESPACE"],
         )
 
     if cfg["PACKAGE_IDS"]:
@@ -282,7 +301,7 @@ def main():
         for pckg in cfg["PACKAGE_IDS"]:
             if pckg not in installed:
                 logging.error(f"~~~ Installing Packages {pckg} ~~~")
-                install_package(args.alias, pckg)
+                install_package(username, pckg)
 
     if cfg["PRE_DEPLOY"]:
         for fldr in cfg["PRE_DEPLOY"]:

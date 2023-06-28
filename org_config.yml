@@ -7,6 +7,9 @@ DURATION: 10
 # Default Devhub
 DEVHUB: my-dev-hub-org
 
+# use_namepspace
+USE_NAMESPACE: False
+
 # List of managed package Ids to install into the Org.
 PACKAGE_IDS: []
 
