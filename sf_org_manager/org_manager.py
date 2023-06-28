@@ -1,5 +1,5 @@
 # org_manager.py
-__version__ = "0.0.1"
+__version__ = "0.0.3"
 
 import argparse
 import json
@@ -82,7 +82,6 @@ def get_org_list():
 
 
 def get_orgs_map(orgs):
-
     try:
         non_scratch_orgs = orgs["result"]["nonScratchOrgs"]
     except KeyError:
@@ -152,7 +151,6 @@ def show_org_list(orgs):
 
 
 def user_details(org_alias):
-
     py_obj = sfdx.user_details(org_alias)
 
     if py_obj["status"] == 1:
@@ -178,7 +176,6 @@ def update_org_list():
 
 
 def main():
-
     setup_args()
     args = parser.parse_args()
 
