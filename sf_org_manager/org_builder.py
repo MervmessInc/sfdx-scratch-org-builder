@@ -157,16 +157,34 @@ def install_source(org_alias, src_folder):
     py_obj = sfdx.install_source(org_alias, src_folder)
 
     if py_obj["status"] == 1:
-        message = py_obj["message"]
-        logging.error(f"MESSAGE: {message}")
-        logging.warning(f"{py_obj}")
+        if "message" in py_obj.keys():
+            logging.info(f"MESSAGE: {py_obj['message']}")
+
+        if "result" in py_obj.keys():
+            if "details" in py_obj["result"].keys():
+                message = py_obj["result"]["details"]
+                for item in message["componentFailures"]:
+                    logging.error(
+                        f"Type: {item['componentType']}, Error: {item['problem']}, Item: {item['fileName']}"
+                    )
+                for item in message["componentSuccesses"]:
+                    logging.debug(
+                        f"Type: {item['componentType']}, Filename: {item['fileName']}, Name: {item['fullName']}"
+                    )
+
         sys.exit(1)
 
     if py_obj["status"] == 0:
-        for item in py_obj["result"]["deployedSource"]:
-            logging.info(
-                f"Type: {item['type']}, State: {item['state']}, Name: {item['fullName']}"
-            )
+        if "result" in py_obj.keys():
+            if "status" in py_obj["result"].keys():
+                logging.info(f"STATUS: {py_obj['result']['status']}")
+
+            if "details" in py_obj["result"].keys():
+                message = py_obj["result"]["details"]
+                for item in message["componentSuccesses"]:
+                    logging.info(
+                        f"Type: {item['componentType']}, Filename: {item['fileName']}, Name: {item['fullName']}"
+                    )
 
     return True
 
