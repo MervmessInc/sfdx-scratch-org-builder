@@ -177,6 +177,8 @@ def install_source(org_alias, src_folder):
     if py_obj["status"] == 1:
         if "message" in py_obj.keys():
             logging.info(f"MESSAGE: {py_obj['message']}")
+            if py_obj['name'] != "NothingToDeploy":
+                sys.exit(1)
 
         if "result" in py_obj.keys():
             if "details" in py_obj["result"].keys():
@@ -189,8 +191,7 @@ def install_source(org_alias, src_folder):
                     logging.debug(
                         f"Type: {item['componentType']}, Filename: {item['fileName']}, Name: {item['fullName']}"
                     )
-
-        sys.exit(1)
+            sys.exit(1)
 
     if py_obj["status"] == 0:
         if "result" in py_obj.keys():
@@ -333,6 +334,7 @@ def main(config_file="./org_config.yml"):
         )
 
     if cfg["PACKAGE_IDS"]:
+        logging.error("~~~ Check Installed Packages ~~~")
         installed = package_list(args.alias)
 
         for pckg in cfg["PACKAGE_IDS"]:
