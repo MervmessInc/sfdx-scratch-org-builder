@@ -96,53 +96,46 @@ def create_community(org_alias: str, community: str, template: str):
 
 
 def create_sratch_org(
-    org_alias: str, duration: str, devhub: str, scratch_def: str, use_namepspace: bool
+    org_alias: str,
+    duration: str,
+    devhub: str,
+    scratch_def: str,
+    use_namepspace: bool,
+    email: str = None,
 ):
-    logging.debug(f"create_sratch_org({org_alias}, {duration}, {devhub})")
+    logging.debug(
+        f"create_sratch_org({org_alias}, {duration}, {devhub}, {email}, {scratch_def}, {use_namepspace})"
+    )
 
-    if use_namepspace:
-        out = subprocess.run(
-            [
-                SFDX_CMD,
-                "org",
-                "create",
-                "scratch",
-                "-f",
-                f"{scratch_def}",
-                "-d",
-                "-y",
-                f"{duration}",
-                "-a",
-                f"{org_alias}",
-                "-v",
-                f"{devhub}",
-                "--json",
-            ],
-            capture_output=True,
-            encoding="utf-8",
-        )
-    else:
-        out = subprocess.run(
-            [
-                SFDX_CMD,
-                "org",
-                "create",
-                "scratch",
-                "-f",
-                f"{scratch_def}",
-                "-d",
-                "-y",
-                f"{duration}",
-                "-a",
-                f"{org_alias}",
-                "-v",
-                f"{devhub}",
-                "--no-namespace",
-                "--json",
-            ],
-            capture_output=True,
-            encoding="utf-8",
-        )
+    cmd = [
+        SFDX_CMD,
+        "org",
+        "create",
+        "scratch",
+        "-f",
+        f"{scratch_def}",
+        "-d",
+        "-y",
+        f"{duration}",
+        "-a",
+        f"{org_alias}",
+        "-v",
+        f"{devhub}",
+        "--json",
+    ]
+
+    if not use_namepspace:
+        cmd.append("--no-namespace")
+
+    if email:
+        cmd.append("--admin-email")
+        cmd.append(f"{email}")
+
+    out = subprocess.run(
+        cmd,
+        capture_output=True,
+        encoding="utf-8",
+    )
 
     return parse_output(out)
 
@@ -215,24 +208,7 @@ def install_permission_set(org_alias: str, pset: str):
 def install_source(org_alias: str, src_folder: str):
     logging.debug(f"install_source({org_alias}, {src_folder})")
 
-    out = subprocess.run(
-        [
-            SFDX_CMD,
-            "project",
-            "deploy",
-            "start",
-            "-d",
-            src_folder,
-            "-o",
-            f"{org_alias}",
-            "-g",
-            "--json",
-        ],
-        capture_output=True,
-        encoding="utf-8",
-    )
-
-    return parse_output(out)
+    return source_push(org_alias, False, src_folder)
 
 
 def org_list():
@@ -312,39 +288,58 @@ def publish_community(org_alias: str, community: str):
     return parse_output(out)
 
 
-def source_push(org_alias: str, forceoverwrite: bool):
-    logging.debug(f"source_push({org_alias}, {forceoverwrite})")
+def source_push(org_alias: str, forceoverwrite: bool, src_folder: str = None):
+    logging.debug(f"source_push({org_alias}, {forceoverwrite}, {src_folder})")
+
+    cmd = [
+        SFDX_CMD,
+        "project",
+        "deploy",
+        "start",
+        "-o",
+        f"{org_alias}",
+        "--json",
+    ]
 
     if forceoverwrite:
-        out = subprocess.run(
-            [
-                SFDX_CMD,
-                "project",
-                "deploy",
-                "start",
-                "-o",
-                f"{org_alias}",
-                "--json",
-                "-c",
-                "-g",
-            ],
-            capture_output=True,
-            encoding="utf-8",
-        )
-    else:
-        out = subprocess.run(
-            [
-                SFDX_CMD,
-                "project",
-                "deploy",
-                "start",
-                "-o",
-                f"{org_alias}",
-                "--json",
-            ],
-            capture_output=True,
-            encoding="utf-8",
-        )
+        cmd.append("-c")
+        cmd.append("-g")
+
+    if src_folder:
+        cmd.append("-d")
+        cmd.append(f"{src_folder}")
+
+    out = subprocess.run(
+        cmd,
+        capture_output=True,
+        encoding="utf-8",
+    )
+
+    return parse_output(out)
+
+
+def source_pull(org_alias: str, metadata: str = None):
+    logging.debug(f"source_pull({org_alias}, {metadata})")
+
+    cmd = [
+        SFDX_CMD,
+        "project",
+        "retrieve",
+        "start",
+        "-o",
+        f"{org_alias}",
+        "--json",
+    ]
+
+    if metadata:
+        cmd.append("-m")
+        cmd.append(f"{metadata}")
+
+    out = subprocess.run(
+        cmd,
+        capture_output=True,
+        encoding="utf-8",
+    )
 
     return parse_output(out)
 
