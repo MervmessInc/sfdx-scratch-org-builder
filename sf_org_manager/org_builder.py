@@ -37,18 +37,31 @@ def get_config(config_file):
 
 
 def setup_args(cfg):
-    parser.add_argument("-a", "--alias", help="Scratch Org user alias")
+    parser.add_argument(
+        "-a",
+        "--alias",
+        help="Scratch Org user alias",
+        type=str,
+    )
     parser.add_argument(
         "-d",
         "--duration",
         help=f"Number of days org will last [1..30]. Default: {cfg['DURATION']}",
         default=cfg["DURATION"],
+        type=int,
     )
     parser.add_argument(
         "-v",
         "--devhub",
         help=f"Target dev hub username or alias. Default: {cfg['DEVHUB']}",
         default=cfg["DEVHUB"],
+        type=str,
+    )
+    parser.add_argument(
+        "-e",
+        "--email",
+        help="Email address that will be applied to the org's admin user",
+        type=str,
     )
     parser.add_argument("--debug", help="Turn on debug messages", action="store_true")
     parser.add_argument("--skip", help="Skip source deploy", action="store_true")
@@ -90,9 +103,14 @@ def check_org(org_alias):
     return "", False
 
 
-def create_sratch_org(org_alias, duration, devhub, scratch_def, use_namepspace):
+def create_sratch_org(org_alias, duration, devhub, email, scratch_def, use_namepspace):
     py_obj = sfdx.create_sratch_org(
-        org_alias, duration, devhub, scratch_def, use_namepspace
+        org_alias,
+        duration,
+        devhub,
+        scratch_def,
+        use_namepspace,
+        email,
     )
 
     if py_obj["status"] == 1:
@@ -309,6 +327,7 @@ def main(config_file="./org_config.yml"):
             args.alias,
             args.duration,
             args.devhub,
+            args.email,
             cfg["SCRATCH_DEF"],
             cfg["USE_NAMESPACE"],
         )

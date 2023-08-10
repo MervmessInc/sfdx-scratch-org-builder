@@ -24,6 +24,8 @@
                 "merv-dev",
                 "-v",
                 "hub-org",
+                "-e",
+                "merv@merv.org.uk",
                 "--debug"
             ]
         },

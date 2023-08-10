@@ -54,19 +54,22 @@ org_builder.py is a Salesforce sfdx helper script that builds a fresh scratch or
 
 ```
 $ sf-org_builder
-usage: org_builder [-h] [-a ALIAS] [-d DURATION] [-v DEVHUB] [--debug]
+usage: org_builder [-h] [-a ALIAS] [-d DURATION] [-v DEVHUB] [-e EMAIL] [--debug] [--skip]
 
 Python wrapper for a number of Salesforce CLI (sfdx) commands, to build and setup Scratch Orgs.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -a ALIAS, --alias ALIAS
                         Scratch Org user alias
   -d DURATION, --duration DURATION
                         Number of days org will last [1..30]. Default: 10
   -v DEVHUB, --devhub DEVHUB
-                        Target dev hub username or alias. Default: hub-org
+                        Target dev hub username or alias. Default: my-dev-hub-org
+  -e EMAIL, --email EMAIL
+                        Email address that will be applied to the org's admin user
   --debug               Turn on debug messages
+  --skip                Skip source deploy
 ```
 
 ### Config
@@ -82,6 +85,9 @@ DURATION: 10
 
 # Default Devhub
 DEVHUB: my-dev-hub-org
+
+# use_namepspace
+USE_NAMESPACE: False
 
 # List of managed package Ids to install into the Org.
 PACKAGE_IDS: []
@@ -114,4 +120,4 @@ POST_DEPLOY: []
 ## Project dependencies
 
 - Salesforce Developer Experience ([SFDX](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)) CLI tools.
-- Python 3.8 : https://www.python.org/downloads/
+- Python > 3.8 : https://www.python.org/downloads/
