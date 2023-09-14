@@ -23,7 +23,7 @@
                 "-a",
                 "merv-dev",
                 "-v",
-                "hub-org",
+                "dev-hub",
                 "-e",
                 "merv@merv.org.uk",
                 "--debug"
