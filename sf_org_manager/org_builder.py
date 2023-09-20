@@ -103,14 +103,17 @@ def check_org(org_alias):
     return "", False
 
 
-def create_sratch_org(org_alias, duration, devhub, email, scratch_def, use_namepspace):
+def create_sratch_org(org_alias, duration, devhub, email, config):
+    preview = config.get("PREVIEW", False)
+
     py_obj = sfdx.create_sratch_org(
         org_alias,
         duration,
         devhub,
-        scratch_def,
-        use_namepspace,
+        config["SCRATCH_DEF"],
+        config["USE_NAMESPACE"],
         email,
+        preview,
     )
 
     if py_obj["status"] == 1:
@@ -177,7 +180,7 @@ def install_source(org_alias, src_folder):
     if py_obj["status"] == 1:
         if "message" in py_obj.keys():
             logging.info(f"MESSAGE: {py_obj['message']}")
-            if py_obj['name'] != "NothingToDeploy":
+            if py_obj["name"] != "NothingToDeploy":
                 sys.exit(1)
 
         if "result" in py_obj.keys():
@@ -329,8 +332,7 @@ def main(config_file="./org_config.yml"):
             args.duration,
             args.devhub,
             args.email,
-            cfg["SCRATCH_DEF"],
-            cfg["USE_NAMESPACE"],
+            cfg,
         )
 
     if cfg["PACKAGE_IDS"]:

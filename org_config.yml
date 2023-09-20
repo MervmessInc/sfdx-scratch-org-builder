@@ -10,6 +10,9 @@ DEVHUB: my-dev-hub-org
 # use_namepspace
 USE_NAMESPACE: False
 
+# Preview Release
+PREVIEW: True
+
 # List of managed package Ids to install into the Org.
 PACKAGE_IDS: []
 

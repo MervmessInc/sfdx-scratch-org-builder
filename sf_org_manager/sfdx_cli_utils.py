@@ -102,9 +102,10 @@ def create_sratch_org(
     scratch_def: str,
     use_namepspace: bool,
     email: str = None,
+    preview: bool = False,
 ):
     logging.debug(
-        f"create_sratch_org({org_alias}, {duration}, {devhub}, {email}, {scratch_def}, {use_namepspace})"
+        f"create_sratch_org({org_alias}, {duration}, {devhub}, {scratch_def}, {use_namepspace}, {email}, {preview})"
     )
 
     cmd = [
@@ -130,6 +131,10 @@ def create_sratch_org(
     if email:
         cmd.append("--admin-email")
         cmd.append(f"{email}")
+
+    if preview:
+        cmd.append("--release")
+        cmd.append("preview")
 
     out = subprocess.run(
         cmd,
