@@ -162,7 +162,9 @@ def user_details(org_alias):
     if py_obj["status"] == 0:
         print(f"OrgId \t\t: {py_obj['result']['orgId']}")
         print(f"Username \t: {py_obj['result']['username']}")
-        print(f"Url \t\t: {py_obj['result']['instanceUrl']}")
+        print(
+            f"Url \t\t: {py_obj['result']['instanceUrl']}/secur/frontdoor.jsp?sid={py_obj['result']['accessToken']}"
+        )
         print(f"Alias \t\t: {py_obj['result']['alias']}")
         print(f"Token \t\t: {py_obj['result']['accessToken']}")
 

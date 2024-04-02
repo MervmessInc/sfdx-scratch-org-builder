@@ -5,7 +5,7 @@ SCRATCH_DEF: config/project-scratch-def.json
 DURATION: 10
 
 # Default Devhub
-DEVHUB: dev-hub
+DEVHUB: my-dev-hub-org
 
 # use_namepspace
 USE_NAMESPACE: False
