@@ -11,6 +11,8 @@ import time
 
 
 # sfdx command.
+if platform.system() == "Darwin":
+    SFDX_CMD = "sf"
 if platform.system() == "Linux":
     SFDX_CMD = "sf"
 if platform.system() == "Windows":
