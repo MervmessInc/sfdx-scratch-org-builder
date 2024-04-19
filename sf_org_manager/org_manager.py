@@ -102,7 +102,12 @@ def get_orgs_map(orgs):
     index = 1
 
     for o in non_scratch_orgs:
-        org = {index: clean_org_data(o)}
+        clean_org = clean_org_data(o)
+
+        if clean_org["defaultMarker"] == "(U)":
+            defaultusername = index
+
+        org = {index: clean_org}
         orgs.update(org)
         index = index + 1
 
@@ -183,7 +188,7 @@ def main():
 
     if args.debug:
         logging.error("~~~ Setting up DEBUG ~~~")
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
 
     logging.info(f"argv[0] ~ {sys.argv[0]}")
 
