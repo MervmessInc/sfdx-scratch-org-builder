@@ -3,8 +3,6 @@
         "njpwerner.autodocstring",
         "aaron-bond.better-comments",
         "usernamehw.errorlens",
-        "visualstudioexptteam.vscodeintellicode",
-        "njqdev.vscode-python-typehint",
         "ms-python.black-formatter",
         "ms-python.flake8",
         "ms-python.vscode-pylance",
