@@ -2,8 +2,30 @@
 
 ## Package Install
 
+### Using pipx (Recommended)
+
+[pipx](https://pypa.github.io/pipx/) installs the package in an isolated environment and makes the CLI commands globally available:
+
+```bash
+pipx install git+https://github.com/MervmessInc/sfdx-scratch-org-builder.git
 ```
-pip install -e .
+
+Or install from a local clone:
+
+```bash
+pipx install .
+```
+
+To upgrade:
+
+```bash
+pipx upgrade sf-org-manager
+```
+
+To uninstall:
+
+```bash
+pipx uninstall sf-org-manager
 ```
 
 ## sf-orgs
