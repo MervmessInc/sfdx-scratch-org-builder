@@ -11,7 +11,6 @@ from pathlib import Path
 import platformdirs
 from rich import box
 from rich.console import Console
-from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
@@ -43,6 +42,7 @@ def _ensure_cache_dir():
 # ---------------------------------------------------------------------------
 # Org list helpers
 # ---------------------------------------------------------------------------
+
 
 def get_org_list():
     """Return the org list, serving from cache when available.
@@ -87,7 +87,9 @@ def get_orgs_map(orgs):
             orgs_map, non_scratch_indices, scratch_indices, default_idx
     """
     result = orgs.get("result", {})
-    non_scratch_orgs = result.get("nonScratchOrgs") or result.get("salesforceOrgs") or []
+    non_scratch_orgs = (
+        result.get("nonScratchOrgs") or result.get("salesforceOrgs") or []
+    )
     scratch_orgs = result.get("scratchOrgs") or []
 
     orgs_map: dict[int, dict] = {}
@@ -118,6 +120,7 @@ def get_orgs_map(orgs):
 # ---------------------------------------------------------------------------
 # Display helpers
 # ---------------------------------------------------------------------------
+
 
 def _status_text(status: str) -> Text:
     """Return a coloured Rich Text cell for the org status."""
@@ -168,7 +171,9 @@ def _build_section(table: Table, indices: list[int], orgs_map: dict[int, dict]):
     return active_count, expired_count
 
 
-def print_org_list(orgs_map: dict, non_scratch_indices: list[int], scratch_indices: list[int]):
+def print_org_list(
+    orgs_map: dict, non_scratch_indices: list[int], scratch_indices: list[int]
+):
     """Render the full org list as two Rich table sections."""
 
     def _make_table(title: str) -> Table:
@@ -182,7 +187,7 @@ def print_org_list(orgs_map: dict, non_scratch_indices: list[int], scratch_indic
             padding=(0, 1),
         )
         t.add_column("#", style="dim", width=4, justify="right")
-        t.add_column("", width=2)                          # default marker
+        t.add_column("", width=2)  # default marker
         t.add_column("Alias", min_width=20, max_width=32)
         t.add_column("Username", min_width=30, max_width=48)
         t.add_column("Expires", width=12)
@@ -220,9 +225,7 @@ def print_org_list(orgs_map: dict, non_scratch_indices: list[int], scratch_indic
 def show_org_list(orgs_map, non_scratch_indices, scratch_indices, from_cache: bool):
     """Display orgs and return the user's validated choice index."""
     if from_cache:
-        console.print(
-            "  [dim italic]Served from cache — refreshing in background[/]"
-        )
+        console.print("  [dim italic]Served from cache — refreshing in background[/]")
         console.print()
 
     print_org_list(orgs_map, non_scratch_indices, scratch_indices)
@@ -266,8 +269,9 @@ def _find_default(orgs_map: dict) -> int:
 # User details
 # ---------------------------------------------------------------------------
 
+
 def user_details(org_alias: str):
-    """Fetch and display org details in a Rich panel."""
+    """Fetch and display org details with lines above and below."""
     py_obj = sfdx.user_details(org_alias)
 
     if py_obj["status"] == 1:
@@ -275,20 +279,23 @@ def user_details(org_alias: str):
         sys.exit(1)
 
     r = py_obj["result"]
-    login_url = f"{r['instanceUrl']}/secur/frontdoor.jsp?sid={r['accessToken']}"
+    token = r.get("accessToken", "")
+    login_url = f"{r['instanceUrl']}/secur/frontdoor.jsp?sid={token}"
 
-    grid = Table.grid(padding=(0, 2))
-    grid.add_column(style="bold dim", justify="right")
-    grid.add_column()
-    grid.add_row("Org ID",   r.get("orgId", ""))
-    grid.add_row("Username", r.get("username", ""))
-    grid.add_row("Alias",    r.get("alias", ""))
-    grid.add_row("URL",      Text(login_url, style="link " + login_url))
-    grid.add_row("Token",    Text(r.get("accessToken", ""), style="dim"))
+    w = 50
+    title = f" {org_alias} "
+    pad_l = (w - len(title)) // 2
+    pad_r = w - len(title) - pad_l
+    header = f"[cyan]{'─' * pad_l}[bold]{title}[/bold]{'─' * pad_r}[/cyan]"
+    footer = f"[cyan]{'─' * w}[/cyan]"
 
-    console.print(
-        Panel(grid, title=f"[bold cyan]{org_alias}[/]", border_style="cyan", expand=False)
-    )
+    console.print(header)
+    console.print(f"  [bold dim]Org ID[/]    {r.get('orgId', '')}")
+    console.print(f"  [bold dim]Username[/]  {r.get('username', '')}")
+    console.print(f"  [bold dim]Alias[/]     {r.get('alias', '')}")
+    console.print(f"  [bold dim]URL[/]       {login_url}")
+    console.print(f"  [bold dim]Token[/]     [dim]{token}[/dim]")
+    console.print(footer)
     console.print()
 
     return login_url
@@ -297,6 +304,7 @@ def user_details(org_alias: str):
 # ---------------------------------------------------------------------------
 # Action menu
 # ---------------------------------------------------------------------------
+
 
 def action_menu(username: str, login_url: str):
     """Prompt the user to open the org, copy the login URL, or quit."""
@@ -311,9 +319,12 @@ def action_menu(username: str, login_url: str):
 
     while True:
         try:
-            raw = console.input(
-                f"[bold]Action for[/] [cyan]{username}[/] [bold]>[/] "
-            ).strip().upper() or "O"
+            raw = (
+                console.input(f"[bold]Action for[/] [cyan]{username}[/] [bold]>[/] ")
+                .strip()
+                .upper()
+                or "O"
+            )
         except (EOFError, KeyboardInterrupt):
             console.print()
             sys.exit(0)
@@ -339,6 +350,7 @@ def action_menu(username: str, login_url: str):
 # Entry point
 # ---------------------------------------------------------------------------
 
+
 def main():
     parser = argparse.ArgumentParser(
         prog="sf-orgs",
@@ -359,10 +371,14 @@ def main():
         with console.status("[bold green]Fetching org list…[/]", spinner="dots"):
             org_list, from_cache = get_org_list()
 
-        orgs_map, non_scratch_indices, scratch_indices, _default = get_orgs_map(org_list)
+        orgs_map, non_scratch_indices, scratch_indices, _default = get_orgs_map(
+            org_list
+        )
 
         if not orgs_map:
-            console.print("[yellow]No orgs found. Are you logged in with 'sf org login'?[/]")
+            console.print(
+                "[yellow]No orgs found. Are you logged in with 'sf org login'?[/]"
+            )
             sys.exit(0)
 
         console.print()
