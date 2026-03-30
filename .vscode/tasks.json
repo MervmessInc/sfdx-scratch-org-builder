@@ -4,7 +4,7 @@
         {
             "label": "ci: install",
             "type": "shell",
-            "command": "${workspaceFolder}\\.venv\\Scripts\\pip.exe",
+            "command": "${workspaceFolder}\\.venv\\Scripts\\pip",
             "args": [
                 "install",
                 "-e",
@@ -21,7 +21,7 @@
         {
             "label": "ci: lint (ruff)",
             "type": "shell",
-            "command": "${workspaceFolder}\\.venv\\Scripts\\ruff.exe",
+            "command": "${workspaceFolder}\\.venv\\Scripts\\ruff",
             "args": [
                 "check",
                 "."
@@ -37,7 +37,7 @@
         {
             "label": "ci: test (pytest)",
             "type": "shell",
-            "command": "${workspaceFolder}\\.venv\\Scripts\\pytest.exe",
+            "command": "${workspaceFolder}\\.venv\\Scripts\\pytest",
             "args": [
                 "tests/",
                 "-v"
@@ -56,7 +56,7 @@
         {
             "label": "build: wheel",
             "type": "shell",
-            "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+            "command": "${workspaceFolder}\\.venv\\Scripts\\python",
             "args": [
                 "-m",
                 "build",

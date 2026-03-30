@@ -93,7 +93,7 @@ class TestCleanOrgData:
 class TestGetOrgsMap:
     def test_single_non_scratch_org(self):
         org_list = _make_org_list(non_scratch=[_make_org(username="a@example.com")])
-        orgs, default = get_orgs_map(org_list)
+        orgs, _ns, _sc, default = get_orgs_map(org_list)
         assert len(orgs) == 1
         assert orgs[1]["username"] == "a@example.com"
 
@@ -101,7 +101,7 @@ class TestGetOrgsMap:
         org_list = _make_org_list(
             non_scratch=[_make_org(username="a@example.com"), _make_org(username="b@example.com")]
         )
-        orgs, _ = get_orgs_map(org_list)
+        orgs, _ns, _sc, _ = get_orgs_map(org_list)
         assert 1 in orgs
         assert 2 in orgs
         assert 0 not in orgs
@@ -111,7 +111,7 @@ class TestGetOrgsMap:
             non_scratch=[_make_org(username="ns@example.com")],
             scratch=[_make_org(username="sc@example.com", expirationDate="2026-12-01")],
         )
-        orgs, _ = get_orgs_map(org_list)
+        orgs, _ns, _sc, _ = get_orgs_map(org_list)
         assert len(orgs) == 2
         assert orgs[1]["username"] == "ns@example.com"
         assert orgs[2]["username"] == "sc@example.com"
@@ -123,7 +123,7 @@ class TestGetOrgsMap:
                 _make_org(username="b@example.com", defaultMarker="(U)"),
             ]
         )
-        _, default = get_orgs_map(org_list)
+        _, _ns, _sc, default = get_orgs_map(org_list)
         assert default == 2
 
     def test_default_username_in_scratch_orgs(self):
@@ -131,12 +131,12 @@ class TestGetOrgsMap:
             non_scratch=[_make_org(username="hub@example.com", defaultMarker="(D)")],
             scratch=[_make_org(username="sc@example.com", defaultMarker="(U)")],
         )
-        _, default = get_orgs_map(org_list)
+        _, _ns, _sc, default = get_orgs_map(org_list)
         assert default == 2
 
     def test_empty_org_list_returns_empty_map(self):
         org_list = _make_org_list()
-        orgs, default = get_orgs_map(org_list)
+        orgs, _ns, _sc, default = get_orgs_map(org_list)
         assert orgs == {}
         assert default == 1  # falls back to 1 when no (U) found
 
@@ -149,12 +149,12 @@ class TestGetOrgsMap:
                 "scratchOrgs": [],
             },
         }
-        orgs, _ = get_orgs_map(org_list)
+        orgs, _ns, _sc, _ = get_orgs_map(org_list)
         assert len(orgs) == 1
         assert orgs[1]["username"] == "sf@example.com"
 
     def test_missing_result_key_returns_empty(self):
         org_list = {"status": 0, "result": {}}
-        orgs, default = get_orgs_map(org_list)
+        orgs, _ns, _sc, default = get_orgs_map(org_list)
         assert orgs == {}
         assert default == 1
