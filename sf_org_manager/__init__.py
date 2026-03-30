@@ -1,2 +1,8 @@
-__version__ = "0.0.3"
-from . import sfdx_cli_utils
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("sf-org-manager")
+except PackageNotFoundError:
+    __version__ = "0.0.0.dev"
+
+

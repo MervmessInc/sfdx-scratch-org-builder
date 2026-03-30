@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: Current File",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
@@ -14,9 +14,9 @@
         },
         {
             "name": "Python: org_builder",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
-            "program": "sf-org_builder.py",
+            "module": "sf_org_manager.org_builder",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
@@ -31,14 +31,12 @@
         },
         {
             "name": "Python: org_manager",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
-            "program": "sf-orgs_app.py",
+            "module": "sf_org_manager.org_manager",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": [
-                "--debug"
-            ]
+            "args": []
         }
     ]
 }
