@@ -77,7 +77,8 @@ def clean_org_data(org):
 def print_org_details(idx, o):
     color = TGREEN if o["status"] == "Active" else TRED
     print(
-        f"{idx:>3} {o['defaultMarker']:<3} {o['alias']:<30} {o['username']:<45} {o['expirationDate']:<12} {color}{o['status']:<10}{ENDC}"
+        f"{idx:>3} {o['defaultMarker']:<3} {o['alias']:<30} {o['username']:<45} "
+        f"{o['expirationDate']:<12} {color}{o['status']:<10}{ENDC}"
     )
 
 

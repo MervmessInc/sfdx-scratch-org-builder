@@ -7,7 +7,6 @@ import subprocess
 import sys
 import time
 
-
 # sfdx command — use 'sf' on macOS/Linux, 'sf.cmd' on Windows
 if platform.system() == "Windows":
     SFDX_CMD = "sf.cmd"

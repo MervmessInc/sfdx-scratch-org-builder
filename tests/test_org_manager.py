@@ -6,7 +6,6 @@ No sf CLI calls are made — all data is constructed inline.
 
 from sf_org_manager.org_manager import clean_org_data, get_orgs_map
 
-
 # ---------------------------------------------------------------------------
 # Sample org data fixtures
 # ---------------------------------------------------------------------------

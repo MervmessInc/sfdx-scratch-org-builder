@@ -1,0 +1,66 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ci: install",
+            "type": "shell",
+            "command": "${workspaceFolder}\\.venv\\Scripts\\pip.exe",
+            "args": ["install", "-e", ".[dev]"],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "ci: lint (ruff)",
+            "type": "shell",
+            "command": "${workspaceFolder}\\.venv\\Scripts\\ruff.exe",
+            "args": ["check", "."],
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "ci: test (pytest)",
+            "type": "shell",
+            "command": "${workspaceFolder}\\.venv\\Scripts\\pytest.exe",
+            "args": ["tests/", "-v"],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "ci: run all (install → lint → test)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "ci: install",
+                "ci: lint (ruff)",
+                "ci: test (pytest)"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
