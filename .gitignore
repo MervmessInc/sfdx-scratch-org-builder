@@ -136,6 +136,7 @@ dmypy.json
 .pylintrc
 org_list.p
 org_list.json
+org_config.yml
 
 # Build artefacts
 *.egg-info/
