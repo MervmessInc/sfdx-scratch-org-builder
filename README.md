@@ -1,5 +1,7 @@
 # sfdx_scratch_org_builder
 
+![CI](https://github.com/MervmessInc/sfdx-scratch-org-builder/actions/workflows/python-app.yml/badge.svg)
+
 ## Package Install
 
 ### Using pipx (Recommended)
@@ -8,6 +10,12 @@
 
 ```bash
 pipx install git+https://github.com/MervmessInc/sfdx-scratch-org-builder.git
+```
+
+Or a specific release tag:
+
+```bash
+pipx install git+https://github.com/MervmessInc/sfdx-scratch-org-builder.git@v0.1.0
 ```
 
 Or install from a local clone:
@@ -55,7 +63,7 @@ python -m sf_org_manager.org_builder --alias my-scratch-org
 
 ## sf-orgs
 
-org_manager.py is a Salesforce sfdx helper script that list Salesforce orgs and optionally logs the user in.
+org_manager.py is a Salesforce CLI helper script that lists Salesforce orgs and optionally opens one in the browser.
 
 ### Usage
 
@@ -63,7 +71,7 @@ org_manager.py is a Salesforce sfdx helper script that list Salesforce orgs and 
 $ sf-orgs -h
 usage: org_manager [-h] [--debug]
 
-Python wrapper for Salesforce CLI (sfdx) that list Salesforce orgs.
+Python wrapper for Salesforce CLI (sf) that lists Salesforce orgs.
 
 options:
   -h, --help  show this help message and exit
@@ -90,20 +98,20 @@ idx     Alias                          Username                                 
 Enter choice 'idx' or 'U' >
 ```
 
-(D) is the default dev-hub for the sfdx project  
-(U) is the default scratch org for the sfdx project
+(D) is the default dev-hub for the project
+(U) is the default username (scratch org) for the project
 
 ## sf-org_builder
 
-org_builder.py is a Salesforce sfdx helper script that builds a fresh scratch org or updates an existing scratch org. Installs dependent pacakges, deploy source code, assign permission sets & runs annonymous APEX scripts.
+org_builder.py is a Salesforce CLI helper that builds a fresh scratch org or updates an existing one. It installs dependent packages, deploys source code, assigns permission sets and runs anonymous Apex scripts.
 
 ### Usage
 
 ```
-$ sf-org_builder
+$ sf-org_builder --help
 usage: org_builder [-h] [-a ALIAS] [-d DURATION] [-v DEVHUB] [-e EMAIL] [--debug] [--skip]
 
-Python wrapper for a number of Salesforce CLI (sfdx) commands, to build and setup Scratch Orgs.
+Python wrapper for a number of Salesforce CLI (sf) commands, to build and setup Scratch Orgs.
 
 options:
   -h, --help            show this help message and exit
@@ -121,50 +129,33 @@ options:
 
 ### Config
 
-[org_config.yml](org_config.yml).
+Copy `org_config.yml.example` to `org_config.yml` in your project directory and customise it.
+`org_config.yml` is gitignored so your personal settings won't be committed.
 
+```bash
+cp org_config.yml.example org_config.yml   # macOS / Linux
+copy org_config.yml.example org_config.yml  # Windows
 ```
-# Scratch Org Definition File
-SCRATCH_DEF: config/project-scratch-def.json
 
-# Default duration in days
-DURATION: 10
+Key fields:
 
-# Default Devhub
-DEVHUB: my-dev-hub-org
-
-# use_namepspace
-USE_NAMESPACE: False
-
-# List of managed package Ids to install into the Org.
-PACKAGE_IDS: []
-
-# List of managed package permission sets to assign to the user.
-PACKAGE_P_SETS: []
-
-# Pre-Deploy use if metadata deploy sequence is important.
-PRE_DEPLOY: []
-
-# List of metadata source folders (SRC_FOLDERS = ["force-app"])
-SRC_FOLDERS: []
-
-# List of permission sets to assign to the user.
-P_SETS: []
-
-# Anonymous APEX files to execute ("setupdata.apex")
-BUILD_DATA_CMD: []
-
-# Name of template to use to create the community
-TMPLT_NAME:
-
-# Name of the Lightning community that you want to publish.
-SITE_NAME:
-
-# Post-Deploy use if metadata deploy sequence is important.
-POST_DEPLOY: []
-```
+| Field | Description |
+|---|---|
+| `SCRATCH_DEF` | Path to your scratch org definition JSON file |
+| `DURATION` | Org lifetime in days (1–30) |
+| `DEVHUB` | Your dev hub alias or username |
+| `USE_NAMESPACE` | `True` if your project uses a namespace |
+| `PACKAGE_IDS` | Managed package version IDs to install |
+| `PACKAGE_P_SETS` | Permission sets from installed packages to assign |
+| `PRE_DEPLOY` | Source folders to deploy before the main push |
+| `SRC_FOLDERS` | Main source folders to deploy |
+| `P_SETS` | Permission sets to assign after deploy |
+| `BUILD_DATA_CMD` | Anonymous Apex files to execute |
+| `POST_DEPLOY` | Source folders to deploy after the main push |
+| `TMPLT_NAME` | Experience Cloud template name (optional) |
+| `SITE_NAME` | Experience Cloud site name to publish (optional) |
 
 ## Project dependencies
 
-- Salesforce Developer Experience ([SFDX](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)) CLI tools.
-- Python >= 3.10 : https://www.python.org/downloads/
+- Salesforce CLI (`sf`) — [Installation guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_setup_install_cli.htm)
+- Python >= 3.10 — <https://www.python.org/downloads/>
