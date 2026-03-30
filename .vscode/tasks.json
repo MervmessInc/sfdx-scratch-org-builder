@@ -44,6 +44,19 @@
             "problemMatcher": []
         },
         {
+            "label": "build: wheel",
+            "type": "shell",
+            "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+            "args": ["-m", "build", "--wheel"],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "ci: run all (install → lint → test)",
             "dependsOrder": "sequence",
             "dependsOn": [
