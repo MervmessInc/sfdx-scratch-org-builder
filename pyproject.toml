@@ -7,7 +7,7 @@ name = "sf-org-manager"
 version = "0.1.0"
 description = "Tool to list Salesforce Orgs & Log in"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Nigel Hughes", email = "merv@merv.org.uk"}
 ]
