@@ -181,7 +181,9 @@ def package_list(org_alias):
 
     for item in py_obj.get("result", []):
         logging.info(
-            f"Name: {item['SubscriberPackageName']}, Version: {item['SubscriberPackageVersionNumber']}, Version Id: {item['SubscriberPackageVersionId']}"
+            f"Name: {item['SubscriberPackageName']}, "
+            f"Version: {item['SubscriberPackageVersionNumber']}, "
+            f"Version Id: {item['SubscriberPackageVersionId']}"
         )
         packages.append(item["SubscriberPackageVersionId"])
 
@@ -250,7 +252,13 @@ def user_details(org_alias):
 
 
 def main(config_file="./org_config.yml"):
-    logging.debug("main()")
+    # Initialise logging first so errors during config load are visible.
+    # Use a quick sys.argv scan for --debug rather than waiting for argparse.
+    logging.basicConfig(
+        level=logging.DEBUG if "--debug" in sys.argv else logging.INFO,
+        format="%(asctime)s - %(message)s",
+        datefmt="%d-%b-%y %H:%M:%S",
+    )
 
     cfg = get_config(config_file)
     dir_path = os.getcwd()
@@ -262,75 +270,73 @@ def main(config_file="./org_config.yml"):
         parser.print_help()
         sys.exit(0)
 
-    logging.basicConfig(
-        level=logging.DEBUG if args.debug else logging.ERROR,
-        format="%(asctime)s - %(message)s",
-        datefmt="%d-%b-%y %H:%M:%S",
-    )
+    logging.info("~~~ Setting up Scratch Org ~~~")
+    logging.debug(f"{args}")
 
-    logging.info("Setting up Scratch Org")
-    logging.info(f"{args}")
-
-    logging.info("Check if Org Already Exists")
+    logging.info("~~~ Check if Org Already Exists ~~~")
     username, org_exists = check_org(args.alias)
 
     if not org_exists:
-        logging.info("Create New Scratch Org")
+        logging.info("~~~ Create New Scratch Org ~~~")
         username = create_sratch_org(args.alias, args.duration, args.devhub, args.email, cfg)
 
     if cfg["PACKAGE_IDS"]:
-        logging.info("Check Installed Packages")
+        logging.info("~~~ Check Installed Packages ~~~")
         installed = package_list(args.alias)
         for pckg in cfg["PACKAGE_IDS"]:
             if pckg not in installed:
-                logging.info(f"Installing Package {pckg}")
+                logging.info(f"~~~ Installing Package {pckg} ~~~")
                 install_package(username, pckg)
 
     if cfg["PRE_DEPLOY"]:
         for fldr in cfg["PRE_DEPLOY"]:
-            logging.info(f"Installing Source ({fldr})")
+            logging.info(f"~~~ Installing Source ({fldr}) ~~~")
             install_source(args.alias, f"{dir_path}/{fldr}")
 
     if cfg["PACKAGE_P_SETS"]:
         for pset in cfg["PACKAGE_P_SETS"]:
-            logging.info(f"Installing Permission Set ({pset})")
+            logging.info(f"~~~ Installing Permission Set ({pset}) ~~~")
             install_permission_set(args.alias, pset)
 
     if args.skip:
-        logging.info("Skipping Source Deploy")
+        logging.info("~~~ Skipping Source Deploy ~~~")
     else:
-        logging.info("Source Deploy")
+        logging.info("~~~ Source Deploy ~~~")
         source_push(args.alias)
 
     if cfg["SRC_FOLDERS"]:
         for fldr in cfg["SRC_FOLDERS"]:
-            logging.info(f"Installing Source ({fldr})")
+            logging.info(f"~~~ Installing Source ({fldr}) ~~~")
             install_source(args.alias, f"{dir_path}/{fldr}")
 
     if cfg["P_SETS"]:
         for pset in cfg["P_SETS"]:
-            logging.info(f"Installing Permission Set ({pset})")
+            logging.info(f"~~~ Installing Permission Set ({pset}) ~~~")
             install_permission_set(args.alias, pset)
 
     if cfg["TMPLT_NAME"]:
-        logging.info(f"Create Community ({cfg['SITE_NAME']})")
+        logging.info(f"~~~ Create Community ({cfg['SITE_NAME']}) ~~~")
         # create_community(args.alias, cfg["SITE_NAME"], cfg["TMPLT_NAME"])
 
     if cfg["BUILD_DATA_CMD"]:
         for script in cfg["BUILD_DATA_CMD"]:
-            logging.info(f"Running Build data ({script})")
+            logging.info(f"~~~ Running Build data ({script}) ~~~")
             execute_script(args.alias, script)
 
     if cfg["SITE_NAME"]:
-        logging.info(f"Publish Community ({cfg['SITE_NAME']})")
+        logging.info(f"~~~ Publish Community ({cfg['SITE_NAME']}) ~~~")
         publish_community(args.alias, cfg["SITE_NAME"])
 
     if cfg["POST_DEPLOY"]:
         for fldr in cfg["POST_DEPLOY"]:
-            logging.info(f"Installing Source ({fldr})")
+            logging.info(f"~~~ Installing Source ({fldr}) ~~~")
             install_source(args.alias, f"{dir_path}/{fldr}")
 
-    logging.info("Details")
+    logging.info("~~~ Details ~~~")
     user_details(args.alias)
 
-    print("~~~ Scratch Org Setup Complete ~~~")
+    logging.info("~~~ Scratch Org Setup Complete ~~~")
+
+
+if __name__ == "__main__":
+    main()
