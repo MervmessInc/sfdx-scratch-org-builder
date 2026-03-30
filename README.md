@@ -6,19 +6,9 @@
 
 ### Using pipx (Recommended)
 
-[pipx](https://pypa.github.io/pipx/) installs the package in an isolated environment and makes the CLI commands globally available:
+[pipx](https://pypa.github.io/pipx/) installs the package in an isolated environment and makes the CLI commands globally available.
 
-```bash
-pipx install git+https://github.com/MervmessInc/sfdx-scratch-org-builder.git
-```
-
-Or a specific release tag:
-
-```bash
-pipx install git+https://github.com/MervmessInc/sfdx-scratch-org-builder.git@v0.1.0
-```
-
-Or install from a local clone:
+Install from a local clone:
 
 ```bash
 pipx install .
@@ -34,6 +24,45 @@ To uninstall:
 
 ```bash
 pipx uninstall sf-org-manager
+```
+
+### Building & Installing a Wheel
+
+You can build a `.whl` file and distribute it without needing access to the Git repository.
+
+#### 1. Build the wheel
+
+Make sure the `build` package is installed, then run:
+
+```bash
+pip install build
+python -m build --wheel
+```
+
+This creates a `.whl` file in the `dist/` directory, e.g. `dist/sf_org_manager-0.1.0-py3-none-any.whl`.
+
+#### 2. Install the wheel with pipx
+
+```bash
+pipx install dist/sf_org_manager-0.1.0-py3-none-any.whl
+```
+
+or with clipboard support:
+
+```bash
+pipx install "dist/sf_org_manager-0.1.0-py3-none-any.whl[clipboard]"
+```
+
+To reinstall or upgrade from a newer wheel:
+
+```bash
+pipx install --force dist/sf_org_manager-0.1.0-py3-none-any.whl
+```
+
+Or with clipboard support:
+
+```bash
+pipx install --force "dist/sf_org_manager-0.1.0-py3-none-any.whl[clipboard]"
 ```
 
 ### Local Development
@@ -139,21 +168,21 @@ copy org_config.yml.example org_config.yml  # Windows
 
 Key fields:
 
-| Field | Description |
-|---|---|
-| `SCRATCH_DEF` | Path to your scratch org definition JSON file |
-| `DURATION` | Org lifetime in days (1–30) |
-| `DEVHUB` | Your dev hub alias or username |
-| `USE_NAMESPACE` | `True` if your project uses a namespace |
-| `PACKAGE_IDS` | Managed package version IDs to install |
+| Field            | Description                                       |
+| ---------------- | ------------------------------------------------- |
+| `SCRATCH_DEF`    | Path to your scratch org definition JSON file     |
+| `DURATION`       | Org lifetime in days (1–30)                       |
+| `DEVHUB`         | Your dev hub alias or username                    |
+| `USE_NAMESPACE`  | `True` if your project uses a namespace           |
+| `PACKAGE_IDS`    | Managed package version IDs to install            |
 | `PACKAGE_P_SETS` | Permission sets from installed packages to assign |
-| `PRE_DEPLOY` | Source folders to deploy before the main push |
-| `SRC_FOLDERS` | Main source folders to deploy |
-| `P_SETS` | Permission sets to assign after deploy |
-| `BUILD_DATA_CMD` | Anonymous Apex files to execute |
-| `POST_DEPLOY` | Source folders to deploy after the main push |
-| `TMPLT_NAME` | Experience Cloud template name (optional) |
-| `SITE_NAME` | Experience Cloud site name to publish (optional) |
+| `PRE_DEPLOY`     | Source folders to deploy before the main push     |
+| `SRC_FOLDERS`    | Main source folders to deploy                     |
+| `P_SETS`         | Permission sets to assign after deploy            |
+| `BUILD_DATA_CMD` | Anonymous Apex files to execute                   |
+| `POST_DEPLOY`    | Source folders to deploy after the main push      |
+| `TMPLT_NAME`     | Experience Cloud template name (optional)         |
+| `SITE_NAME`      | Experience Cloud site name to publish (optional)  |
 
 ## Project dependencies
 
