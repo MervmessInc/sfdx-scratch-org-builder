@@ -2,8 +2,55 @@
 
 ## Package Install
 
+### Using pipx (Recommended)
+
+[pipx](https://pypa.github.io/pipx/) installs the package in an isolated environment and makes the CLI commands globally available:
+
+```bash
+pipx install git+https://github.com/MervmessInc/sfdx-scratch-org-builder.git
 ```
-pip install -e .
+
+Or install from a local clone:
+
+```bash
+pipx install .
+```
+
+To upgrade:
+
+```bash
+pipx upgrade sf-org-manager
+```
+
+To uninstall:
+
+```bash
+pipx uninstall sf-org-manager
+```
+
+### Local Development
+
+To run from a local clone without a global install, activate the virtual environment and install in editable mode — changes to source are reflected immediately:
+
+```bash
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS / Linux
+pip install -e ".[dev]"
+```
+
+The console commands then work normally:
+
+```bash
+sf-orgs
+sf-org_builder --help
+```
+
+Or, if you want to skip the install step entirely, invoke via the module flag:
+
+```bash
+# No install needed — useful for a quick one-off test
+python -m sf_org_manager.org_manager
+python -m sf_org_manager.org_builder --alias my-scratch-org
 ```
 
 ## sf-orgs
@@ -120,4 +167,4 @@ POST_DEPLOY: []
 ## Project dependencies
 
 - Salesforce Developer Experience ([SFDX](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)) CLI tools.
-- Python > 3.8 : https://www.python.org/downloads/
+- Python >= 3.10 : https://www.python.org/downloads/

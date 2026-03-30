@@ -1,6 +1,4 @@
 # sfdx_cli_utils.py
-__version__ = "0.0.3"
-
 
 import json
 import logging
@@ -9,42 +7,35 @@ import subprocess
 import sys
 import time
 
-
-# sfdx command.
-if platform.system() == "Darwin":
-    SFDX_CMD = "sf"
-if platform.system() == "Linux":
-    SFDX_CMD = "sf"
+# sfdx command — use 'sf' on macOS/Linux, 'sf.cmd' on Windows
 if platform.system() == "Windows":
     SFDX_CMD = "sf.cmd"
+else:
+    SFDX_CMD = "sf"
 
 # Config
-#
 SLEEP_SEC = 120
-#
 
 
 def parse_output(cmd_output):
     logging.debug("parse_output(cmd_output)")
-    logging.warning(f"ARGS: {cmd_output.args}")
+    logging.debug(f"ARGS: {cmd_output.args}")
 
-    py_obj = {}
-
-    if cmd_output.stderr == "" and cmd_output.stdout == "":
+    if not cmd_output.stdout and not cmd_output.stderr:
         logging.error(f"NO OUTPUT ~ {cmd_output}")
         sys.exit(1)
 
-    if cmd_output.stderr != "" and cmd_output.stdout == "":
+    if cmd_output.stderr and not cmd_output.stdout:
         logging.error(f"STDERR: {cmd_output.stderr}")
-        if "Warning: sfdx-cli update available" not in str(cmd_output.stderr):
-            sys.exit(1)
+        sys.exit(1)
 
-    if cmd_output.stdout != "":
-        js_str = cmd_output.stdout[cmd_output.stdout.index("{") :]
-        py_obj = json.loads(js_str)
+    try:
+        py_obj = json.loads(cmd_output.stdout)
+    except json.JSONDecodeError as exc:
+        logging.error(f"Failed to parse JSON output: {exc}\nRaw: {cmd_output.stdout!r}")
+        sys.exit(1)
 
     logging.debug(json.dumps(py_obj, sort_keys=True, indent=3))
-
     return py_obj
 
 
@@ -78,15 +69,16 @@ def create_community(org_alias: str, community: str, template: str):
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:community:create",
-            "-u",
-            f"{org_alias}",
-            "-n",
+            "community",
+            "create",
+            "--name",
             f"{community}",
-            "-t",
+            "--template-name",
             f"{template}",
-            "-p",
+            "--url-path-prefix",
             "demosite",
+            "--target-org",
+            f"{org_alias}",
             "--json",
         ],
         capture_output=True,
@@ -281,11 +273,12 @@ def publish_community(org_alias: str, community: str):
     out = subprocess.run(
         [
             SFDX_CMD,
-            "force:community:publish",
-            "-u",
-            f"{org_alias}",
-            "-n",
+            "community",
+            "publish",
+            "--name",
             f"{community}",
+            "--target-org",
+            f"{org_alias}",
             "--json",
         ],
         capture_output=True,

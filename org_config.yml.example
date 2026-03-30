@@ -1,0 +1,53 @@
+# org_config.yml.example
+# Copy this file to org_config.yml and customise for your project.
+# org_config.yml is gitignored so your local settings won't be committed.
+
+# Path to your scratch org definition file
+SCRATCH_DEF: config/project-scratch-def.json
+
+# Default duration in days [1..30]
+DURATION: 10
+
+# Default Dev Hub username or alias
+DEVHUB: my-dev-hub-org
+
+# Set to True if your project uses a namespace
+USE_NAMESPACE: False
+
+# Set to True to create the scratch org on the Salesforce preview release
+PREVIEW: False
+
+# List of managed package version IDs to install into the org.
+# Example: ["04tXXXXXXXXXXXXX", "04tYYYYYYYYYYYYY"]
+PACKAGE_IDS: []
+
+# List of permission set names from managed packages to assign to the admin user.
+# Example: ["MyPackagePermSet"]
+PACKAGE_P_SETS: []
+
+# Source folders to deploy BEFORE the main source push (order matters).
+# Example: ["force-app/pre-deploy"]
+PRE_DEPLOY: []
+
+# Main source folders to deploy via 'sf project deploy start'.
+# Example: ["force-app"]
+SRC_FOLDERS: []
+
+# Permission set names to assign to the admin user after source deploy.
+# Example: ["MyAppPermSet", "MyAppPermSet2"]
+P_SETS: []
+
+# Anonymous Apex files to execute after deploy.
+# Example: ["scripts/apex/setupdata.apex"]
+BUILD_DATA_CMD: []
+
+# Source folders to deploy AFTER the main deploy (order matters).
+# Example: ["force-app/post-deploy"]
+POST_DEPLOY: []
+
+# Experience Cloud / Community settings (leave blank if not used)
+# Name of the Experience Cloud template to use when creating a community.
+TMPLT_NAME:
+
+# Name of the Lightning community (Experience Cloud site) to publish.
+SITE_NAME:
