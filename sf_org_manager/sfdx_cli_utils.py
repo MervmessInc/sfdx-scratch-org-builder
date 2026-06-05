@@ -361,4 +361,27 @@ def user_details(org_alias: str):
         encoding="utf-8",
     )
 
-    return parse_output(out)
+    py_obj = parse_output(out)
+    
+    if py_obj.get("status") == 0 and "result" in py_obj:
+        token = py_obj["result"].get("accessToken", "")
+        if "[REDACTED]" in token:
+            logging.debug(f"Token redacted, fetching with org auth show-access-token")
+            token_out = subprocess.run(
+                [
+                    SFDX_CMD,
+                    "org",
+                    "auth",
+                    "show-access-token",
+                    "-o",
+                    f"{org_alias}",
+                    "--json",
+                ],
+                capture_output=True,
+                encoding="utf-8",
+            )
+            token_py_obj = parse_output(token_out)
+            if token_py_obj.get("status") == 0 and "result" in token_py_obj:
+                py_obj["result"]["accessToken"] = token_py_obj["result"].get("accessToken", "")
+                
+    return py_obj
