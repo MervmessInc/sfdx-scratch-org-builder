@@ -382,6 +382,8 @@ def user_details(org_alias: str):
             )
             token_py_obj = parse_output(token_out)
             if token_py_obj.get("status") == 0 and "result" in token_py_obj:
-                py_obj["result"]["accessToken"] = token_py_obj["result"].get("accessToken", "")
+                py_obj["result"]["accessToken"] = token_py_obj["result"].get(
+                    "accessToken", ""
+                )
 
     return py_obj
